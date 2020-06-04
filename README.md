@@ -22,13 +22,13 @@ account types
  
 # Priority list
 - create app diagram with usage 
-- setup mysql database structure on host
+- setup firebase database structure 
 - building app pages with swiping navication 
    up->profile
    down->settings
    left->private messages 
    right->custom feed
-- building php-json api for app to communicate to database
+- building api for app to communicate to database
 - add to app pages design and structure
 - add login,register,and logout functionality
 - code loading functions that will be called for loading posts and messages to the screen
