@@ -21,4 +21,22 @@ account types
  news, memes, art, etc 
  
 # Priority list
-1. 
+- create app diagram with usage 
+- setup mysql database structure on host
+- building app pages with swiping navication 
+   up->profile
+   down->settings
+   left->private messages 
+   right->custom feed
+- building php-json api for app to communicate to database
+- add to app pages design and structure
+- add login,register,and logout functionality
+- code loading functions that will be called for loading posts and messages to the screen
+- code webcall functions that make api calls to database and load data
+- use loading functions with webcall data.
+- code posting functions that will be called for posting and messaging to the database
+- code notification system for new messages and posts
+- ...
+- other features and settings to be determined
+- ...
+- discuss colors logo and styles with u.i.
