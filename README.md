@@ -7,7 +7,7 @@ Designing an app to further our knowledge of software development
 - Some undecided webserver
 
 # Discord
-
+https://discord.gg/RDJw6Pb
 # App Primary Structure
 - private message page
 - post page
