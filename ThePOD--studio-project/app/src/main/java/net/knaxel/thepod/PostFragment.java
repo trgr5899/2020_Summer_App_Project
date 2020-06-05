@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -36,12 +38,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.Policy;
 
 public class PostFragment extends Fragment implements SurfaceHolder.Callback{
 
     final int CAMERA_REQUEST_CODE = 0;
     private boolean safeToTakePicture = false;
-     final Camera camera = Camera.open(); ;
+     //final Camera camera = Camera.open(); ;
      Camera.PictureCallback jpegCallBack = new Camera.PictureCallback(){
          @Override
          public void onPictureTaken(byte[] bytes, Camera camera){
@@ -58,7 +61,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
              matrix.postRotate(90);
              bitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix, true);
              Context applicationContext = MainActivity.getContextOfApplication();
-             String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "temp" , "");
+             String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "temp0" , "");
              intent.putExtra("capture",s);
 
              startActivity(intent);
@@ -77,6 +80,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
+        Button mCapture = view.findViewById(R.id.capture);
         Button mLogout = view.findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener(){
 
@@ -86,6 +90,14 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
                 logout();
             }
         });
+        mCapture.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                capture();
+            }
+        });
+
         mSurfaceView = view.findViewById(R.id.surfaceView);
         mSurfaceHolder = mSurfaceView.getHolder();
 
@@ -100,30 +112,31 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         return view;
     }
     private void logout(){
-        /*FirebaseAuth.getInstance().signOut();
+        FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(getContext(), SplashScreenActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        */
-        capture();
+
         return;
 
     }
     public void capture(){
 
-            camera.takePicture(null, null , jpegCallBack);
+           // camera.takePicture(null, null , jpegCallBack);
             safeToTakePicture = false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+/*
         Camera.Parameters parameters;
         parameters = camera.getParameters();
 
         camera.setDisplayOrientation(90);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-
+        parameters.setPictureSize(4032,2268);
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
         camera.setParameters(parameters);
 
         try {
@@ -134,7 +147,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
 
         camera.startPreview();
         safeToTakePicture = true;
-
+*/
     }
 
     @Override

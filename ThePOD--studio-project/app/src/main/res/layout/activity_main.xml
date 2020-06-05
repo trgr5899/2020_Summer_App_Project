@@ -13,25 +13,16 @@
 
     </androidx.viewpager.widget.ViewPager>
 
-    <Button
-        android:id="@+id/capture"
-        android:layout_width="62dp"
-        android:layout_height="59dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:gravity="center"
-        android:text="[ O ]"
-        android:textSize="9pt">
-    </Button>
+
 
     <Button
         android:id="@+id/status"
         android:layout_width="62dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="60dp"
         android:gravity="center"
         android:textSize="9pt"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:background="@null"
         android:text="[ T ]">
 
@@ -45,7 +36,7 @@
         android:layout_marginLeft="35dp"
         android:background="@null"
         android:text="[messages]"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="9pt"></Button>
 
     <Button
@@ -56,7 +47,7 @@
         android:layout_marginRight="50dp"
         android:background="@null"
         android:text="[feed]"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="9pt"></Button>
 
 </FrameLayout>

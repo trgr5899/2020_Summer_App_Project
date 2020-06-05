@@ -41,21 +41,9 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(1);
 
 
-        Button mCapture = findViewById(R.id.capture);
         Button mMessages = findViewById(R.id.messages);
         Button mFeed = findViewById(R.id.feed);
-        mCapture.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-    if(viewPager.getCurrentItem()==1){
-
-        postfragment.capture();
-    }else{
-        viewPager.setCurrentItem(1);
-    }
-            }
-        });
         mMessages.setOnClickListener(new View.OnClickListener(){
 
             @Override
