@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "897474817496",
+    "firebase_url": "https://thepod-390cf.firebaseio.com",
+    "project_id": "thepod-390cf",
+    "storage_bucket": "thepod-390cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897474817496:android:436d42947a94b4a6f256ad",
+        "android_client_info": {
+          "package_name": "net.knaxel.thepod"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897474817496-bsu58rlpa41a9q75ajmtgtc2vqdvm7r3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.knaxel.thepod",
+            "certificate_hash": "e6496268941b4328da7b211e4abb7b814e7a106f"
+          }
+        },
+        {
+          "client_id": "897474817496-pgec3k0ebfppi8rjqtbu0qpd32rpd5rc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm5AJ2hXJ2CCb9rBQ2U7S8ShSOPJk73Dw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "897474817496-pgec3k0ebfppi8rjqtbu0qpd32rpd5rc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
