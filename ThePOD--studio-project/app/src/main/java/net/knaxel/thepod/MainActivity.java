@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     public static Context contextOfApplication;
+    private static PostFragment postfragment = PostFragment.newInstance();
     public static Context getContextOfApplication()
     {
         return contextOfApplication;
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
     if(viewPager.getCurrentItem()==1){
-        PostFragment fragment = (PostFragment) adapterViewPager.getItem(1);
-        fragment.capture();
+
+        postfragment.capture();
     }else{
         viewPager.setCurrentItem(1);
     }
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case 1 :
                 {
-                    return PostFragment.newInstance();
+                    return postfragment;
                 }
                 case 2 :
                 {

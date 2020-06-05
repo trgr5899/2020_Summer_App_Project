@@ -56,7 +56,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
              Matrix matrix = new Matrix();
 
              matrix.postRotate(90);
-
+             bitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix, true);
              Context applicationContext = MainActivity.getContextOfApplication();
              String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "temp" , "");
              intent.putExtra("capture",s);
@@ -109,7 +109,6 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         return;
 
     }
-    Uri imageUri;
     public void capture(){
 
             camera.takePicture(null, null , jpegCallBack);
@@ -132,6 +131,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         camera.startPreview();
         safeToTakePicture = true;
 
