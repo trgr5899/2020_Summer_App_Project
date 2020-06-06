@@ -1,6 +1,5 @@
-# 2020_Summer_App_Project
-Designing an app to further our knowledge of software development 
-
+# 2020 POD
+Designing a social media app to further our knowledge of software development 
 
 # Tools Used
 - Android Studio
@@ -79,6 +78,7 @@ Designing an app to further our knowledge of software development
 8.  code notification system for new messages and posts
 9.  finalize post screen layout. 
 10.  refractor camera and add recording
+11.  secure database
 11.  tutorial screens on first login
 ----- 1. general info
 ----- 2. skip or continue 
