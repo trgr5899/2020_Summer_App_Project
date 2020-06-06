@@ -21,22 +21,28 @@ account types
  news, memes, art, etc 
  
 # Priority list
-- create app diagram with usage 
-- setup firebase database structure 
-- building app pages with swiping navication 
+x create app diagram with usage 
+x building app pages with swiping navication 
    up->profile
    down->settings
    left->private messages 
    right->custom feed
-- building api for app to communicate to database
-- add to app pages design and structure
-- add login,register,and logout functionality
-- code loading functions that will be called for loading posts and messages to the screen
-- code webcall functions that make api calls to database and load data
-- use loading functions with webcall data.
-- code posting functions that will be called for posting and messaging to the database
+x plan firebase database structure 
+x add login,register,and logout functionality
+- add to post page for text based posts and threads
+- make profile and settings page from swiping up or down from anywhere.
+- fillout app pages (messages, profile,settings, feed) with xml example codes
+- code for posting to database
+- code private messaging to the database
+- code for loading posts and messages to each page
+- code for following system
 - code notification system for new messages and posts
+- finalize post screen layout. 
+- refractor camera and add recording
+- tutorial screens on first login
+--- 1. general info
+--- 2. skip or continue 
+- discuss colors logo and styles with u.i.
 - ...
 - other features and settings to be determined
 - ...
-- discuss colors logo and styles with u.i.
