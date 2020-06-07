@@ -3,30 +3,28 @@ package net.knaxel.thepod;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
     public static Context contextOfApplication;
     private static PostFragment postfragment = new PostFragment();
     private static MessagingFragment messagingfragment = new MessagingFragment();
+
+
     public static Context getContextOfApplication()
     {
         return contextOfApplication;
@@ -70,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
         }
         return 0;
     }
+
+
+
+
     public static class MainPagerAdapter extends FragmentPagerAdapter {
 
         public MainPagerAdapter(@NonNull FragmentManager fm) {

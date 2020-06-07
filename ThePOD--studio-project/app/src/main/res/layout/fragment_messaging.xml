@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary">
+    android:background="@android:color/white">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,9 +14,9 @@
                      android:orientation="horizontal">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/messenger_profile_pic"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:layout_margin="13dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="12dp"
                     app:civ_border_width="1dp"
                     app:civ_border_color="@android:color/black"
                     android:src="@drawable/gjokidre9qn41">
@@ -27,6 +27,7 @@
                      android:layout_margin="5dp"
                      android:layout_height="25dp"
                      android:layout_gravity="center"
+                     android:backgroundTint="@android:color/black"
                      android:background="@drawable/corners">
 
                  </Button>
@@ -35,6 +36,7 @@
                      android:layout_width="25dp"
                      android:layout_height="25dp"
                      android:layout_gravity="center"
+                     android:backgroundTint="@android:color/black"
                      android:background="@drawable/corners">
 
                  </Button>
@@ -43,34 +45,28 @@
                      android:layout_width="25dp"
                      android:layout_height="25dp"
                      android:layout_gravity="center"
+                     android:backgroundTint="@android:color/black"
                      android:background="@drawable/corners">
 
                  </Button>
                      <androidx.appcompat.widget.SearchView
-                         android:layout_width="match_parent"
-                         android:layout_height="40dp"
+                         android:layout_width="wrap_content"
+                         android:layout_height="35dp"
                          android:background="@drawable/corners"
                          android:layout_margin="5dp"
                          android:gravity="center"
+                         android:backgroundTint="@android:color/black"
                          android:layout_gravity="center">
 
 
                      </androidx.appcompat.widget.SearchView>
                  </LinearLayout>
-        <View
-            android:id="@+id/lineMessage"
-            android:layout_below="@+id/messagePreviewMeat"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:alpha=".1"
-            android:background="@android:color/black"
-            android:layout_marginTop="1dp"
-            />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/messageFeed"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white">
                 </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 </ScrollView>

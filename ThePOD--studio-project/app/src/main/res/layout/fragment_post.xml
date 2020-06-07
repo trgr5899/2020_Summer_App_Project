@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
+    android:id="@+id/postFragment"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -9,23 +10,90 @@
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="51dp"></SurfaceView>
+        android:layout_marginBottom="50dp"></SurfaceView>
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/profileButton"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[ profile ]"
+        android:layout_margin="8dp"
+        android:background="@drawable/corners_dark"
+        android:paddingRight="10dp">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="5dp"
+        android:src="@drawable/gjokidre9qn41">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+    <TextView
+        android:id="@+id/display_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:text="DisplayName Here"
         android:textColor="@android:color/white"
-        android:background="@null"></Button>
+        android:background="@null"
+        android:gravity="left|center_vertical"
+        android:layout_gravity="center_vertical"></TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cameraSettings"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:padding="5dp">
+        <Button
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@android:color/black"
+            android:shadowColor="@android:color/transparent"
+            android:background="@drawable/corners"/>
+        <Button
+            android:layout_width="30dp"
+            android:layout_margin="5dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@android:color/black"
+            android:shadowColor="@android:color/transparent"
+            android:background="@drawable/corners"/>
+        <Button
+            android:layout_width="30dp"
+            android:layout_margin="5dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@android:color/black"
+            android:shadowColor="@android:color/transparent"
+            android:background="@drawable/corners"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/capture"
-        android:layout_width="62dp"
-        android:layout_height="59dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="60dp"
+        android:layout_marginLeft="50dp"
         android:gravity="center"
-        android:text="[ O ]"
+        android:textSize="9pt"
+        android:background="@drawable/capture_button"
+        android:shadowColor="@android:color/transparent"></Button>
+    <Button
+        android:id="@+id/post"
+        android:layout_width="90dp"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="70dp"
+        android:gravity="center"
+        android:background="@drawable/post_button"
+        android:layout_marginRight="50dp"
+        android:shadowColor="@android:color/transparent"
+        android:text="T"
         android:textSize="9pt"></Button>
 </FrameLayout>

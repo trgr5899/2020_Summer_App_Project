@@ -1,0 +1,42 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/profile_header">
+
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/account_header">
+
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/messages_header">
+
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/feed_header">
+
+        <MultiSelectListPreference
+            android:defaultValue="@array/checklist"
+            android:entries="@array/checklist"
+            android:entryValues="@array/checklist"
+            android:key="post_types"
+            android:summary="What type of posts should show on your feed."
+            android:title="Post Types"
+            app:useSimpleSummaryProvider="true"/>
+        <SwitchPreferenceCompat
+            app:key="nsfw"
+            app:title="Show NSFW" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:dependency="nsfw"
+            app:key="blurNSFW"
+            app:summaryOff="Not blurring NSFW."
+            app:summaryOn="Currently blurring NSFW before showing."
+            app:title="Blur NSFW" />
+
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

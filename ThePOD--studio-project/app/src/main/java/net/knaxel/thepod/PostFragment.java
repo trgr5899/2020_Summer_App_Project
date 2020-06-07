@@ -2,8 +2,7 @@ package net.knaxel.thepod;
 
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.ContentResolver;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,34 +10,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.security.Policy;
 
 public class PostFragment extends Fragment implements SurfaceHolder.Callback{
 
@@ -81,13 +73,15 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
         Button mCapture = view.findViewById(R.id.capture);
-        Button mLogout = view.findViewById(R.id.logout);
+        LinearLayout mLogout = view.findViewById(R.id.profileButton);
         mLogout.setOnClickListener(new View.OnClickListener(){
 
 
             @Override
             public void onClick(View v) {
-                logout();
+                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_up, R.anim.still);
+                startActivity(intent, options.toBundle());
             }
         });
         mCapture.setOnClickListener(new View.OnClickListener(){
@@ -99,6 +93,17 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         });
 
         mSurfaceView = view.findViewById(R.id.surfaceView);
+
+        mSurfaceView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()){
+            @Override
+            public void onSwipeTop() {
+
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_up, R.anim.still);
+                startActivity(intent, options.toBundle());
+            }
+
+        });
         mSurfaceHolder = mSurfaceView.getHolder();
 
         if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
