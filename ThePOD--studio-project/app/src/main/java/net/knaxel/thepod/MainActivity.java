@@ -8,18 +8,25 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     public static Context contextOfApplication;
-    private static PostFragment postfragment = PostFragment.newInstance();
+    private static PostFragment postfragment = new PostFragment();
+    private static MessagingFragment messagingfragment = new MessagingFragment();
     public static Context getContextOfApplication()
     {
         return contextOfApplication;
@@ -33,36 +40,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
         final ViewPager viewPager = findViewById(R.id.view_pager);
 
         final FragmentPagerAdapter adapterViewPager= new MainPagerAdapter(getSupportFragmentManager());
+        viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapterViewPager);
 
         viewPager.setCurrentItem(1);
 
+        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        Button mMessages = findViewById(R.id.messages);
-        Button mFeed = findViewById(R.id.feed);
-
-        mMessages.setOnClickListener(new View.OnClickListener(){
-
+        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
             @Override
-            public void onClick(View v) {
+            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
 
-                viewPager.setCurrentItem(0);
-
-            }
-        });
-        mFeed.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-
-                viewPager.setCurrentItem(2);
+                viewPager.setCurrentItem(getSelectedItem(bottomNavigationView));
             }
         });
 
-
+    }
+    private int getSelectedItem(BottomNavigationView bottomNavigationView) {
+        Menu menu = bottomNavigationView.getMenu();
+        for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
+            MenuItem menuItem = menu.getItem(i);
+            if (menuItem.isChecked()) {
+                return i;
+            }
+        }
+        return 0;
     }
     public static class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case 1 :
                 {
-                    return postfragment;
+                    return PostFragment.newInstance();
                 }
                 case 2 :
                 {

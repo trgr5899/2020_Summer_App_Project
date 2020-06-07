@@ -44,7 +44,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
 
     final int CAMERA_REQUEST_CODE = 0;
     private boolean safeToTakePicture = false;
-     //final Camera camera = Camera.open(); ;
+     final Camera camera = Camera.open(); ;
      Camera.PictureCallback jpegCallBack = new Camera.PictureCallback(){
          @Override
          public void onPictureTaken(byte[] bytes, Camera camera){
@@ -122,14 +122,14 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
     }
     public void capture(){
 
-           // camera.takePicture(null, null , jpegCallBack);
+            camera.takePicture(null, null , jpegCallBack);
             safeToTakePicture = false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-/*
+
         Camera.Parameters parameters;
         parameters = camera.getParameters();
 
@@ -147,7 +147,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
 
         camera.startPreview();
         safeToTakePicture = true;
-*/
+
     }
 
     @Override

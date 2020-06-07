@@ -7,47 +7,18 @@
     tools:context=".MainActivity">
 
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/view_pager">
+        android:layout_height="match_parent"/>
 
-    </androidx.viewpager.widget.ViewPager>
-
-
-
-    <Button
-        android:id="@+id/status"
-        android:layout_width="62dp"
-        android:layout_height="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:gravity="center"
-        android:textSize="9pt"
-        android:textColor="@android:color/black"
-        android:background="@null"
-        android:text="[ T ]">
-
-    </Button>
-
-    <Button
-        android:id="@+id/messages"
-        android:layout_width="139dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="35dp"
-        android:background="@null"
-        android:text="[messages]"
-        android:textColor="@android:color/black"
-        android:textSize="9pt"></Button>
-
-    <Button
-        android:id="@+id/feed"
-        android:layout_width="124dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="50dp"
-        android:background="@null"
-        android:text="[feed]"
-        android:textColor="@android:color/black"
-        android:textSize="9pt"></Button>
-
+        app:itemBackground="@android:color/black"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/navigation" />
 </FrameLayout>
