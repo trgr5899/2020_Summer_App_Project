@@ -60,6 +60,30 @@ public class MessagingFragment extends Fragment {
         messagePreviews.add(messagePreview1);
         messagePreview1 = new MessagePreview("ttt", "4", (char)0);
         messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
+        messagePreview1 = new MessagePreview("ttt", "4", (char)0);
+        messagePreviews.add(messagePreview1);
     }
     /*******************************************************************************
      * Adapter class handles loading and setting variables into the views
@@ -78,6 +102,8 @@ public class MessagingFragment extends Fragment {
 
 
         }
+
+       // public int getItemViewType(int position);
 
         @NonNull
         @Override

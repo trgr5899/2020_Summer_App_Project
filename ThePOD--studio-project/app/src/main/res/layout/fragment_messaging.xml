@@ -57,11 +57,20 @@
 
                      </androidx.appcompat.widget.SearchView>
                  </LinearLayout>
+        <View
+            android:id="@+id/lineMessage"
+            android:layout_below="@+id/messagePreviewMeat"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".1"
+            android:background="@android:color/black"
+            android:layout_marginTop="1dp"
+            />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/messageFeed"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
                 </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 </ScrollView>
