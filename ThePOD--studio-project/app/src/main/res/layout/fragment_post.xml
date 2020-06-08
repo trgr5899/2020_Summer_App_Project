@@ -5,11 +5,10 @@
     android:background="@android:color/white">
 
 
-    <TextureView
+    <net.knaxel.thepod.AutoFitTextureView
         android:id="@+id/texture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="51dp"></TextureView>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></net.knaxel.thepod.AutoFitTextureView>
 
     <Button
         android:id="@+id/logout"
