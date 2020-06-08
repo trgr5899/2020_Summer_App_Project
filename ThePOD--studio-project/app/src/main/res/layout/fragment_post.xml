@@ -5,11 +5,11 @@
     android:background="@android:color/white">
 
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <TextureView
+        android:id="@+id/texture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="51dp"></SurfaceView>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="51dp"></TextureView>
 
     <Button
         android:id="@+id/logout"
