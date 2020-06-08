@@ -6,6 +6,7 @@
             <LinearLayout
                 android:id="@+id/messagePreviewMeat"
                 android:orientation="horizontal"
+                android:background="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -40,8 +41,7 @@
 
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@android:color/white"
-            android:src="@drawable/ic_chat_24px" >
+            android:src="@drawable/ic_recieved_message" >
         </ImageView>
     <View
         android:id="@+id/lineMessage"

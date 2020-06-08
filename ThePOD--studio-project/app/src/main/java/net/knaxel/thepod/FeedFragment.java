@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -199,6 +201,8 @@ public class FeedFragment extends Fragment {
             switch (holder.getItemViewType()) {
                 case 0:
                     ThreadViewHolder threadViewHolder = (ThreadViewHolder)holder;
+
+
                     break;
                 case 1:
                     StatusViewHolder statusViewHolder = (StatusViewHolder)holder;
@@ -217,19 +221,38 @@ public class FeedFragment extends Fragment {
         /*
          *custom view holder that stores protected view objects do be edited by Adapter.
          * */
-        protected class ThreadViewHolder extends RecyclerView.ViewHolder {
-            CircleImageView mCircleImageView;
+        protected class FeedObjViewHolder extends RecyclerView.ViewHolder{
 
+            Button mLikeButton ;
+            boolean liked = false;
+            public FeedObjViewHolder(@NonNull View itemView) {
+                super(itemView);
+                mLikeButton = itemView.findViewById(R.id.likeButton);
+                mLikeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(liked) {
+                            mLikeButton.setBackgroundResource(R.drawable.ic_heart);
+                            liked =false;
+                        }else{
+                            liked =true;
+                            mLikeButton.setBackgroundResource(R.drawable.ic_heart_colored);
+                        }
+                    }
+                });
+            }
+        }
+        protected class ThreadViewHolder extends FeedObjViewHolder {
+            CircleImageView mCircleImageView;
 
             public ThreadViewHolder(@NonNull View itemView) {
                 super(itemView);
                 mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
 
 
-
             }
         }
-        protected class MediaViewHolder extends RecyclerView.ViewHolder {
+        protected class MediaViewHolder extends FeedObjViewHolder {
             CircleImageView mCircleImageView;
 
 
@@ -241,7 +264,7 @@ public class FeedFragment extends Fragment {
 
             }
         }
-        protected class StatusViewHolder extends RecyclerView.ViewHolder {
+        protected class StatusViewHolder extends FeedObjViewHolder {
             CircleImageView mCircleImageView;
 
 

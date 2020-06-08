@@ -61,7 +61,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center|right"
                 android:backgroundTint="@android:color/white"
-                android:background="@drawable/corners"/>
+                android:background="@drawable/ic_settings_white_24dp"/>
 
         </FrameLayout>
         <RelativeLayout

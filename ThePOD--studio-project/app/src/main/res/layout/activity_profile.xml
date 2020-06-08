@@ -39,7 +39,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="right|center_vertical"
                     android:layout_margin="8dp"
-                    android:background="@drawable/corners"
+                    android:background="@drawable/ic_settings_white_24dp"
                     android:backgroundTint="@android:color/black" />
             </FrameLayout>
 

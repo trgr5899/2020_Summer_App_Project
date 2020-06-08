@@ -55,22 +55,16 @@
             android:backgroundTint="@android:color/black"
             android:shadowColor="@android:color/transparent"
             android:background="@drawable/corners"/>
+
         <Button
-            android:layout_width="30dp"
+            android:layout_width="35dp"
             android:layout_margin="5dp"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:layout_gravity="center"
-            android:backgroundTint="@android:color/black"
-            android:shadowColor="@android:color/transparent"
-            android:background="@drawable/corners"/>
-        <Button
-            android:layout_width="30dp"
-            android:layout_margin="5dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:backgroundTint="@android:color/black"
-            android:shadowColor="@android:color/transparent"
-            android:background="@drawable/corners"/>
+            android:backgroundTint="@android:color/white"
+            android:background="@null"
+            android:foreground="@drawable/ic_flash_on_24px"
+            />
     </LinearLayout>
 
     <Button

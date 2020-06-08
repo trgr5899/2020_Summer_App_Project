@@ -2,6 +2,7 @@ package net.knaxel.thepod;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +11,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -60,12 +65,58 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
          }
      };
 
+    MediaRecorder recorder;
     SurfaceView mSurfaceView;
     SurfaceHolder mSurfaceHolder;
 
     public static PostFragment newInstance(){
         PostFragment fragment = new PostFragment();
         return fragment;
+    }
+    private void startRecording(){
+        prepareRecorder();
+
+
+        recorder.start();
+    }
+    private void stopRecording(){
+
+        recorder.stop();
+        initRecorder();
+    }
+
+    private void initRecorder() {
+        recorder = new MediaRecorder();
+        recorder.reset();
+        recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+        recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        CamcorderProfile profile = CamcorderProfile.get(Camera.CameraInfo.CAMERA_FACING_FRONT,CamcorderProfile.QUALITY_LOW);
+
+        recorder.setProfile(profile);
+        recorder.setOutputFile(this.getActivity().getFilesDir() + "/temp.mp4");
+        recorder.setMaxDuration(50000); // 50 seconds
+        recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+    }
+    private void prepareRecorder() {
+//        recorder.setPreviewDisplay(mSurfaceHolder.getSurface());
+
+        try {
+            recorder.prepare();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+
+        }
     }
 
     @Override
@@ -83,12 +134,34 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
                 ActivityOptions options = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_up, R.anim.still);
                 startActivity(intent, options.toBundle());
             }
-        });
-        mCapture.setOnClickListener(new View.OnClickListener(){
+        });/*
+        mCapture.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        //startRecording();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        //stopRecording();
+                        break;
+                }
+                return false;
+            }
+        });*/
 
+        mCapture.setOnClickListener(new View.OnClickListener(){
+            boolean t = false;
             @Override
             public void onClick(View v) {
-                capture();
+                if(t){
+                    stopRecording();
+                    t=false;
+                }else{
+                    startRecording();
+                    t=true;
+                }
             }
         });
 
@@ -114,6 +187,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         mSurfaceHolder.setType(mSurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
 
+        initRecorder();
         return view;
     }
     private void logout(){
@@ -139,6 +213,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback{
         parameters = camera.getParameters();
 
         camera.setDisplayOrientation(90);
+
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         parameters.setPictureSize(4032,2268);
         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
