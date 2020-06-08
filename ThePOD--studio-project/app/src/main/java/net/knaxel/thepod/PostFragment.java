@@ -59,157 +59,24 @@ import java.security.Policy;
 import java.util.Arrays;
 
 
-public class PostFragment extends Fragment implements SurfaceHolder.Callback{
-
-    final int CAMERA_REQUEST_CODE = 0;
-    private boolean safeToTakePicture = false;
-     final Camera camera = Camera.open(); ;
-     Camera.PictureCallback jpegCallBack = new Camera.PictureCallback(){
-         @Override
-         public void onPictureTaken(byte[] bytes, Camera camera){
-             safeToTakePicture = true;
-             Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
-
-             File picture_file = null;
-              String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-
-             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0, bytes.length);
-             Matrix matrix = new Matrix();
-
-             matrix.postRotate(90);
-             bitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix, true);
-             Context applicationContext = MainActivity.getContextOfApplication();
-             String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "temp0" , "");
-             intent.putExtra("capture",s);
-
-             startActivity(intent);
-         }
-     };
-
-    SurfaceView mSurfaceView;
-    SurfaceHolder mSurfaceHolder;
-
-    public static PostFragment newInstance(){
-        PostFragment fragment = new PostFragment();
-        return fragment;
-    }
-
-    @Override
-    public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_post, container, false);
-
-        Button mCapture = view.findViewById(R.id.capture);
-        Button mLogout = view.findViewById(R.id.logout);
-        mLogout.setOnClickListener(new View.OnClickListener(){
-
-
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
-        mCapture.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                capture();
-            }
-        });
-
-        mSurfaceView = view.findViewById(R.id.surfaceView);
-        mSurfaceHolder = mSurfaceView.getHolder();
-
-        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
-        }else {
-            mSurfaceHolder.addCallback(this);
-        }
-        mSurfaceHolder.setType(mSurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-
-        return view;
-    }
-    private void logout(){
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getContext(), SplashScreenActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
-        return;
-
-    }
-    public void capture(){
-
-            camera.takePicture(null, null , jpegCallBack);
-            safeToTakePicture = false;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-        Camera.Parameters parameters;
-        parameters = camera.getParameters();
-
-        camera.setDisplayOrientation(90);
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-        parameters.setPictureSize(4032,2268);
-        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-        camera.setParameters(parameters);
-
-        try {
-            camera.setPreviewDisplay(mSurfaceHolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        camera.startPreview();
-        safeToTakePicture = true;
-
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
-            case CAMERA_REQUEST_CODE: {
-                if(grantResults.length > 0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    mSurfaceHolder.addCallback(this);
-                    mSurfaceHolder.setType(mSurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-                }else{
-                    Toast.makeText(getContext(), "POD needs your permission to use your camera", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-        }
-    }
-}
-
-/*
-public class PostFragment extends AppCompatActivity
-{
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+public class PostFragment extends Fragment {
     Button button;
     Button logout;
     TextureView textureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0,90);
-        ORIENTATIONS.append(Surface.ROTATION_90,0);
-        ORIENTATIONS.append(Surface.ROTATION_180,270);
-        ORIENTATIONS.append(Surface.ROTATION_270,180);
+
+    public static PostFragment newInstance() {
+        PostFragment fragment = new PostFragment();
+        return fragment;
     }
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
+
     private String cameraId;
     CameraDevice cameraDevice;
     CameraCaptureSession cameraCaptureSession;
@@ -218,18 +85,17 @@ public class PostFragment extends AppCompatActivity
 
     private Size imageDimensions;
     private ImageReader imageReader;
-    private  File file;
+    private File file;
     Handler mBackgroundHandler;
+    HandlerThread mBackgroundThread;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_post);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        textureView= (TextureView)findViewById(R.id.texture);
-        button =(Button)findViewById(R.id.capture) ;
-        logout=(Button)findViewById(R.id.logout);
+        textureView = (TextureView) view.findViewById(R.id.texture);
+        button = (Button) view.findViewById(R.id.capture);
+        logout = (Button) view.findViewById(R.id.logout);
         textureView.setSurfaceTextureListener(textureListener);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -238,15 +104,15 @@ public class PostFragment extends AppCompatActivity
                 takePicture();
             }
         });
+
+        return view;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==101)
-        {
-            if(grantResults[0]==PackageManager.PERMISSION_DENIED)
-            {
-                Toast.makeText(getApplicationContext(),"sorry.camera permissions is necessary",Toast.LENGTH_LONG).show();
+        if (requestCode == 101) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(this.getContext(), "sorry.camera permissions is necessary", Toast.LENGTH_LONG).show();
                 // finish();
             }
         }
@@ -254,11 +120,15 @@ public class PostFragment extends AppCompatActivity
 
     }
 
-    TextureView.SurfaceTextureListener textureListener= new TextureView.SurfaceTextureListener() {
+    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            openCamera();
+            try {
+                openCamera();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -278,11 +148,11 @@ public class PostFragment extends AppCompatActivity
     };
 
 
-    private final  CameraDevice.StateCallback stateCallback= new CameraDevice.StateCallback() {
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onOpened(CameraDevice camera) {
-            cameraDevice=camera;
+            cameraDevice = camera;
             try {
                 createCameraPreview();
             } catch (CameraAccessException e) {
@@ -291,37 +161,38 @@ public class PostFragment extends AppCompatActivity
 
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
 
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onError(CameraDevice camera, int error) {
             cameraDevice.close();
-            cameraDevice=null;
+            cameraDevice = null;
 
         }
     };
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createCameraPreview() throws CameraAccessException {
-        SurfaceTexture texture =textureView.getSurfaceTexture();
-        texture.setDefaultBufferSize(imageDimensions.getWidth(),imageDimensions.getHeight());
-        Surface surface=new Surface(texture);
+        SurfaceTexture texture = textureView.getSurfaceTexture();
+        texture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+        Surface surface = new Surface(texture);
 
-        captureRequestBuilder=cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+        captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         captureRequestBuilder.addTarget(surface);
 
         cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
             @Override
             public void onConfigured(CameraCaptureSession session) {
-                if(cameraDevice==null)
-                {
+                if (cameraDevice == null) {
                     return;
                 }
-                cameraCaptureSession= session;
+                cameraCaptureSession = session;
                 try {
                     updatePreview();
                 } catch (CameraAccessException e) {
@@ -331,42 +202,51 @@ public class PostFragment extends AppCompatActivity
             }
 
             @Override
-            public void onConfigureFailed( CameraCaptureSession session)
-            {
-                Toast.makeText(getApplicationContext(),"Configuration Changed",Toast.LENGTH_LONG).show();
+            public void onConfigureFailed(CameraCaptureSession session) {
+                Toast.makeText(getContext(), "Configuration Changed", Toast.LENGTH_LONG).show();
 
             }
-        },null);
+        }, null);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void updatePreview() throws CameraAccessException {
-        if(cameraDevice==null)
-        {
+        if (cameraDevice == null) {
             return;
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(),null,mBackgroundHandler);
+        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void openCamera() throws CameraAccessException {
-        CameraManager manager=(CameraManager)getSystemService(Context.CAMERA_SERVICE);
-        cameraId=manager.getCameraIdList()[0];
-        CameraCharacteristics characteristics=manager.getCameraCharacteristics(cameraId);
-        StreamConfigurationMap map= characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        CameraManager manager = (CameraManager) this.getActivity().getSystemService(Context.CAMERA_SERVICE);
+        cameraId = manager.getCameraIdList()[0];
+        CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+        StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
         assert map != null;
-        imageDimensions=map.getOutputSizes(SurfaceTexture.class)[0];
-
+        imageDimensions = map.getOutputSizes(SurfaceTexture.class)[0];
+/*
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
         {
-            ActivityCompat.requestPermissions(PostFragment.this,new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},101);
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},101);
+            return;
+        }*/
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        manager.openCamera(cameraId,stateCallback,null);
+        manager.openCamera(cameraId, stateCallback, null);
 
 
     }
@@ -379,7 +259,7 @@ public class PostFragment extends AppCompatActivity
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
     startBackgroundThread();
         if(textureView.isAvailable())
@@ -404,9 +284,9 @@ public class PostFragment extends AppCompatActivity
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void onPause() {
+    public void onPause() {
         try {
             stopBackgroundThread();
         } catch (InterruptedException e) {
@@ -415,7 +295,7 @@ public class PostFragment extends AppCompatActivity
         super.onPause();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void stopBackgroundThread() throws InterruptedException {
         mBackgroundThread.quitSafely();
         mBackgroundThread.join();
@@ -424,4 +304,4 @@ public class PostFragment extends AppCompatActivity
 
     }
 }
-*/
+
