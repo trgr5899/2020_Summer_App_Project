@@ -11,12 +11,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp">
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/POD"/>
+        android:src="@drawable/pod"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

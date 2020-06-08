@@ -16,7 +16,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/POD"/>
+            android:src="@drawable/pod"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,9 +28,10 @@
             android:textColor="@color/colorAccent"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="50dp"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
@@ -44,9 +45,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/email"
         android:hint="email@website.com"
+        android:textColorHint="@android:color/darker_gray"
         android:textColor="@android:color/black"
         android:layout_margin="5dp"
-        android:padding="5dp"
+        android:padding="8dp"
         android:background="@drawable/background_round_corners_25dp"/>
 
         <TextView
@@ -60,9 +62,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/password"
+        android:textColorHint="@android:color/darker_gray"
         android:textColor="@android:color/black"
         android:layout_margin="5dp"
-        android:padding="5dp"
+        android:padding="8dp"
         android:inputType="textPassword"
         android:hint="password"
         android:background="@drawable/background_round_corners_25dp" />
