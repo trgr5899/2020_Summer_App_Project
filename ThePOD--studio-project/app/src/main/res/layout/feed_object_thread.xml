@@ -44,7 +44,7 @@
             android:layout_height="5dp"
             android:layout_gravity="right|center_vertical"
             android:backgroundTint="@android:color/black"
-            android:background="@drawable/corners"/>
+            android:background="@drawable/background_round_corners_25dp"/>
     </FrameLayout>
 
     <TextView

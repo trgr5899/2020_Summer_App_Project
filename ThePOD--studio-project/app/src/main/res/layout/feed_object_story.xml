@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:foreground="@drawable/story_outline"
+        android:foreground="@drawable/outline_circle"
         android:layout_gravity="center">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/storyProfilePic"
