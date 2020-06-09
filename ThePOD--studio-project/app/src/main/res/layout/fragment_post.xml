@@ -4,10 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
-<VideoView
-    android:id="@+id/video"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
 
 
     <SurfaceView
@@ -94,4 +90,9 @@
         android:shadowColor="@android:color/transparent"
         android:text="T"
         android:textSize="9pt"></Button>
+    <VideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </FrameLayout>

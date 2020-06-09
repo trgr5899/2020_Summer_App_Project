@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -34,6 +35,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,23 +84,33 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
         return fragment;
     }
 
-    private void startRecording() {
-        prepareRecorder();
+    public void startRecording() {
+        if(capturePressedLong){
+            return;
+        }
         camera.unlock();
+        prepareRecorder();
 
         recorder.start();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void stopRecording() {
-
+    public void stopRecording() {
         recorder.stop();
         camera.lock();
-        mVideoView.setVideoURI(Uri.parse(getContext().getFilesDir()+ "/temp31.mp4"));
-        MediaController mediaController = new MediaController(this.getContext());
+
+        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/temp1.mp4");
+        mVideoView.setVideoURI(Uri.fromFile(file));
+        //mVideoView.setContentDescription("Fds");
+        if(file.exists()){
+            Log.println(Log.ERROR,MainActivity.class.toString(),  Uri.fromFile(file).toString());
+        }
+        MediaController mediaController = new MediaController(getActivity());
         mVideoView.setMediaController(mediaController);
-        mediaController.setEnabled(true);
-        initRecorder();
+        mVideoView.requestFocus();
+        mVideoView.start();
+
+        //initRecorder();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -106,13 +118,17 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
         recorder = new MediaRecorder();
         recorder.setPreviewDisplay(mSurfaceHolder.getSurface());
         recorder.setCamera(camera);
+        recorder.setOrientationHint(90);
         recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-         recorder.setOutputFile(getContext().getFilesDir() + "/temp31.mp4");
+        //recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        //recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+        //recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        recorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/temp1.mp4");
+         recorder.setOutputFile(file.getAbsolutePath());
         recorder.setMaxDuration(50000); // 50 seconds
+        //recorder.setVideoEncodingBitRate(6000000);
         recorder.setVideoFrameRate(30);
         recorder.setMaxFileSize(500000000); // Approximately 5 megabyte
        camera.lock();
@@ -148,13 +164,22 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
     }
 
+    private boolean capturePressedLong = false;
     @Override
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        mVideoView = view.findViewById(R.id.video);
+        mVideoView = (VideoView) view.findViewById(R.id.video);
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
         Button mCapture = view.findViewById(R.id.capture);
         LinearLayout mLogout = view.findViewById(R.id.profileButton);
+
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,15 +188,39 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
                 startActivity(intent, options.toBundle());
             }
         });
-
+        mCapture.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startRecording();
+                capturePressedLong = true;
+                return true;
+            }
+        });
+        mCapture.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.onTouchEvent(event);
+                // We're only interested in when the button is released.
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (capturePressedLong) {
+                        // Do something when the button is released.
+                        stopRecording();
+                        capturePressedLong = false;
+                    }else{
+                        camera.lock();
+                        takePicture();
+                    }
+                }
+                return false;
+            }
+        });
+/*
         mCapture.setOnClickListener(new View.OnClickListener() {
             boolean t = false;
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                //camera.lock();
-                //camera.takePicture(null, null, jpegCallBack);
                 if (t) {
                     stopRecording();
                     t = false;
@@ -181,7 +230,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
                 }
             }
         });
-
+*/
         mSurfaceView = view.findViewById(R.id.surfaceView);
 
         mSurfaceHolder = mSurfaceView.getHolder();
@@ -195,6 +244,9 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
         return view;
     }
+    public void takePicture(){
+        camera.takePicture(null, null, jpegCallBack);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -203,9 +255,9 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
         Camera.Parameters parameters  = camera.getParameters();
         camera.setDisplayOrientation(90);
 
-        //parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-       // parameters.setPictureSize(4032,2268);
-        //parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        parameters.setPictureSize(4032,2268);
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         camera.setParameters(parameters);
 
         initRecorder();
