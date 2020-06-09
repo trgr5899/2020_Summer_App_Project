@@ -1,6 +1,7 @@
 package net.knaxel.thepod;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -9,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity  {
     {
         return contextOfApplication;
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         contextOfApplication = getApplicationContext();
@@ -40,7 +43,6 @@ public class MainActivity extends AppCompatActivity  {
 
 
         final ViewPager viewPager = findViewById(R.id.view_pager);
-
         final FragmentPagerAdapter adapterViewPager= new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapterViewPager);
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity  {
                 viewPager.setCurrentItem(getSelectedItem(bottomNavigationView));
             }
         });
-
     }
     private int getSelectedItem(BottomNavigationView bottomNavigationView) {
         Menu menu = bottomNavigationView.getMenu();

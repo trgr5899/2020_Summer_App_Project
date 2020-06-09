@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
@@ -43,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Calendar;
 
 public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
@@ -65,7 +69,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
             matrix.postRotate(90);
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
             Context applicationContext = MainActivity.getContextOfApplication();
-            String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "te0m1", "");
+            String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "pod-"+ Calendar.getInstance().getTime().toString(), "");
 
             Log.println(Log.ERROR,MainActivity.class.getName(),s);
             intent.putExtra("capture", s);
@@ -99,16 +103,10 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
         recorder.stop();
         camera.lock();
 
-        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/temp1.mp4");
-        mVideoView.setVideoURI(Uri.fromFile(file));
-        //mVideoView.setContentDescription("Fds");
-        if(file.exists()){
-            Log.println(Log.ERROR,MainActivity.class.toString(),  Uri.fromFile(file).toString());
-        }
-        MediaController mediaController = new MediaController(getActivity());
-        mVideoView.setMediaController(mediaController);
-        mVideoView.requestFocus();
-        mVideoView.start();
+        Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
+        intent.putExtra("video", getActivity().getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/temp1.mp4");
+        startActivity(intent);
+
 
         //initRecorder();
     }
@@ -170,13 +168,6 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        mVideoView = (VideoView) view.findViewById(R.id.video);
-        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-            }
-        });
         Button mCapture = view.findViewById(R.id.capture);
         LinearLayout mLogout = view.findViewById(R.id.profileButton);
 
@@ -204,7 +195,14 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (capturePressedLong) {
                         // Do something when the button is released.
-                        stopRecording();
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Do something after 5s = 5000ms
+                                stopRecording();
+                            }
+                        }, 350);
                         capturePressedLong = false;
                     }else{
                         camera.lock();
@@ -214,25 +212,9 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
                 return false;
             }
         });
-/*
-        mCapture.setOnClickListener(new View.OnClickListener() {
-            boolean t = false;
 
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                if (t) {
-                    stopRecording();
-                    t = false;
-                } else {
-                    startRecording();
-                    t = true;
-                }
-            }
-        });
-*/
         mSurfaceView = view.findViewById(R.id.surfaceView);
-
+       // mSurfaceView.setMinimumWidth(995438594);//mSurfaceView.getHeight()*(9/16));
         mSurfaceHolder = mSurfaceView.getHolder();
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -241,7 +223,6 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
             mSurfaceHolder.addCallback(this);
         }
         mSurfaceHolder.setType(mSurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
         return view;
     }
     public void takePicture(){
@@ -257,6 +238,12 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         parameters.setPictureSize(4032,2268);
+        parameters.setPreviewSize(1280,720);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(9*(getView().getHeight())/16, getView().getHeight());
+        lp.setMargins(-(9*(getView().getHeight())/16 - getView().getWidth())/2,0,0,0);
+        mSurfaceView.setLayoutParams( lp);
+        //mSurfaceHolder.setFixedSize(getView().getWidth(),(16*getView().getWidth()/9));
+        //mSurfaceHolder.setFixedSize(8*getView().getHeight()/16,getView().getHeight());
         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         camera.setParameters(parameters);
 
@@ -264,6 +251,7 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
         try {
             camera.setPreviewDisplay(mSurfaceHolder);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
