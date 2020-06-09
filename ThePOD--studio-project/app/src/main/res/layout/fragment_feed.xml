@@ -44,6 +44,13 @@
                     android:layout_gravity="center"
                     android:backgroundTint="@android:color/white"
                     android:background="@drawable/background_round_corners_25dp"/>
+                <Button
+                    android:layout_margin="8dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@android:color/white"
+                    android:background="@drawable/background_round_corners_25dp"/>
 
                 <Button
                     android:layout_margin="8dp"

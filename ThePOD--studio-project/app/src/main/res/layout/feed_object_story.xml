@@ -28,6 +28,7 @@
     </FrameLayout>
     </FrameLayout>
     <TextView
+        android:id="@+id/author_displayname"
         android:background="@android:color/white"
         android:layout_width="75dp"
         android:layout_height="17dp"

@@ -137,7 +137,7 @@ public class MessagingFragment extends Fragment {
                 super(itemView);
 
                 mCircleImageView = itemView.findViewById(R.id.messenger_profile_pic);
-                mName = itemView.findViewById(R.id.messenger_display_name);
+                mName = itemView.findViewById(R.id.messenger_displayname);
             }
         }
     }

@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
     <TextView
+        android:id="@+id/thread_subject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
@@ -26,6 +27,7 @@
 
 
         <TextView
+            android:id="@+id/author_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -48,6 +50,7 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/thread_title"
         android:layout_width="match_parent"
         android:layout_height="22dp"
         android:layout_gravity="left"
@@ -62,6 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/thread_description"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="left"

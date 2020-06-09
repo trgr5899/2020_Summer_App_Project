@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,8 +29,10 @@ public class FeedFragment extends Fragment {
     private FeedFragment.AdapterStoryFeed mStoryAdapter;
     private FeedFragment.AdapterFeed mFeedAdapter;
     private RecyclerView.LayoutManager storyLayoutManager,feedLayoutManager;
+
     private ArrayList<StoryPreview> storyProfilePics = new ArrayList<>();
     private ArrayList<FeedObject> feedObjects = new ArrayList<>();
+
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
@@ -198,13 +201,16 @@ public class FeedFragment extends Fragment {
                 case 0:
                     ThreadViewHolder threadViewHolder = (ThreadViewHolder)holder;
 
+                    threadViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
 
                     break;
                 case 1:
                     StatusViewHolder statusViewHolder = (StatusViewHolder)holder;
+                    statusViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
                     break;
                 case 2:
                     MediaViewHolder mediaViewHolder = (MediaViewHolder)holder;
+                    mediaViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
                     break;
             }
         }
@@ -220,9 +226,12 @@ public class FeedFragment extends Fragment {
         protected class FeedObjViewHolder extends RecyclerView.ViewHolder{
 
             Button mLikeButton ;
+            TextView mAuthorUsername;
+            TextView mAuthorDisplayname;
             boolean liked = false;
             public FeedObjViewHolder(@NonNull View itemView) {
                 super(itemView);
+                mAuthorUsername = itemView.findViewById(R.id.author_username);
                 mLikeButton = itemView.findViewById(R.id.likeButton);
                 mLikeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -275,31 +284,31 @@ public class FeedFragment extends Fragment {
     }
     public class FeedObject{
 
-        String authorDisplayName, authorUserName,authorProfilePicture,data;
+        String authorDisplayname, authorUsername,authorProfilePicture,data;
         char type;
 
         public FeedObject(String authorDisplayName, String authorUserName, String authorProfilePicture, String data, char type) {
-            this.authorDisplayName = authorDisplayName;
-            this.authorUserName = authorUserName;
+            this.authorDisplayname = authorDisplayName;
+            this.authorUsername = authorUserName;
             this.authorProfilePicture = authorProfilePicture;
             this.data = data;
             this.type = type;
         }
 
         public String getAuthorDisplayName() {
-            return authorDisplayName;
+            return authorDisplayname;
         }
 
         public void setAuthorDisplayName(String authorDisplayName) {
-            this.authorDisplayName = authorDisplayName;
+            this.authorDisplayname = authorDisplayName;
         }
 
         public String getAuthorUserName() {
-            return authorUserName;
+            return authorUsername;
         }
 
         public void setAuthorUserName(String authorUserName) {
-            this.authorUserName = authorUserName;
+            this.authorUsername = authorUserName;
         }
 
         public String getAuthorProfilePicture() {

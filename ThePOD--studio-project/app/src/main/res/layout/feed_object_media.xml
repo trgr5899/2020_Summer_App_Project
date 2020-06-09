@@ -25,6 +25,7 @@
         </de.hdodenhof.circleimageview.CircleImageView>
 
         <TextView
+            android:id="@+id/author_displayname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -36,6 +37,7 @@
 
         </TextView>
         <TextView
+            android:id="@+id/author_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
