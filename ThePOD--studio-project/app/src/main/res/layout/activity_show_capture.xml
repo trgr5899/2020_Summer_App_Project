@@ -14,9 +14,49 @@
     </VideoView>
     <ImageView
         android:id="@+id/captureImage"
-        android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
     </ImageView>
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:backgroundTint="@android:color/white"
+        android:background="@drawable/ic_arrow" />
+    <Button
+        android:id="@+id/buttonSaveCapture"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:layout_gravity="right"
+        android:backgroundTint="@android:color/white"
+        android:background="@drawable/ic_arrow" />
+
+
+
+    <Button
+        android:id="@+id/buttonSendCapture"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:rotation="180"
+        android:backgroundTint="@android:color/white"
+        android:layout_margin="10dp"
+        android:background="@drawable/ic_arrow" />
+
+    <Button
+        android:id="@+id/buttonPostCapture"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="70dp"
+        android:layout_gravity="bottom|right"
+        android:rotation="180"
+        android:backgroundTint="@android:color/white"
+        android:background="@drawable/ic_queue_24px" />
+
+
 </FrameLayout>

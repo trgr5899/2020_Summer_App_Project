@@ -123,7 +123,7 @@ public class FeedFragment extends Fragment {
         @NonNull
         @Override
         public FeedFragment.AdapterStoryFeed.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object_story, parent, false);
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_story, parent, false);
                     return new FeedFragment.AdapterStoryFeed.MyViewHolder(view);
 
         }
@@ -179,15 +179,15 @@ public class FeedFragment extends Fragment {
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
                 case 0: {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object_thread, parent, false);
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_thread, parent, false);
                     return new FeedFragment.AdapterFeed.ThreadViewHolder(view);
                 }
                 case 1: {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object_status, parent, false);
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_status, parent, false);
                     return new FeedFragment.AdapterFeed.StatusViewHolder(view);
                 }
                 case 2: {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object_media, parent, false);
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_media, parent, false);
                     return new FeedFragment.AdapterFeed.MediaViewHolder(view);
                 }
             }

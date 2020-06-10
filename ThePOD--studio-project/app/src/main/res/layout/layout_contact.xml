@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@android:color/white"
+    android:padding="8dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/messenger_profile_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gjokidre9qn41">
+
+        </de.hdodenhof.circleimageview.CircleImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:text="ContactTitle"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/black"
+            android:textSize="10pt"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="ContactTitle"
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"
+            android:textSize="10pt"/>
+
+
+</LinearLayout>
+<ImageView
+android:id="@+id/postOptions"
+android:layout_alignRight="@+id/messagePreviewMeat"
+android:layout_marginRight="12dp"
+android:layout_gravity="right|center_vertical"
+android:layout_width="30dp"
+android:layout_height="30dp"
+android:background="@drawable/ic_recieved_message" >
+</ImageView>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/listDivider" />
+</FrameLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostActivity">
+    <FrameLayout
+        android:id="@+id/frameLayoutPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal"
+        android:background="@android:color/white">
+        <Button
+            android:id="@+id/buttonBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:backgroundTint="@android:color/black"
+            android:background="@drawable/ic_arrow" />
+        <Button
+            android:id="@+id/buttonPost"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="right|center_vertical"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:text="POST"
+            android:padding="5dp"
+            android:background="@drawable/background_round_corners_5dp" />
+
+    </FrameLayout>
+    <ScrollView
+        android:layout_below="@+id/frameLayoutPost"
+        android:layout_above="@+id/postingTabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/></ScrollView>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/postingTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:tabTextColor="@android:color/black"
+        android:background="@android:color/white"
+        app:tabIndicatorColor="@android:color/holo_blue_light">
+
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="thread" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="status" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="media" />
+    </com.google.android.material.tabs.TabLayout>
+
+</RelativeLayout>

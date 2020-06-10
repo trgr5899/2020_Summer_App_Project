@@ -11,8 +11,10 @@
                 android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/messenger_profile_pic"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:paddingTop="3dp"
+                    android:paddingLeft="3dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_margin="10dp"
                     app:civ_border_width="1dp"
                     app:civ_border_color="@android:color/black"
@@ -21,12 +23,11 @@
                 </de.hdodenhof.circleimageview.CircleImageView>
                 <TextView
                     android:id="@+id/messenger_displayname"
-                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:textSize="14dp"
-                    android:textStyle="bold"
+                    android:textSize="10pt"
                     android:text="knaxel baby">
 
                 </TextView>
@@ -43,13 +44,12 @@
             android:layout_height="30dp"
             android:src="@drawable/ic_recieved_message" >
         </ImageView>
+
     <View
-        android:id="@+id/lineMessage"
+        android:id="@+id/divider"
         android:layout_below="@+id/messagePreviewMeat"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:alpha=".1"
-        android:background="@android:color/black"
-        android:layout_marginTop="1dp"
-        />
+        android:layout_weight="1"
+        android:background="?android:attr/listDivider" />
 </RelativeLayout>

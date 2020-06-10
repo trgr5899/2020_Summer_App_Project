@@ -107,7 +107,7 @@ public class MessagingFragment extends Fragment {
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object_message, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_message, parent, false);
 
             return new MyViewHolder(view);
         }

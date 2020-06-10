@@ -71,7 +71,6 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
             Context applicationContext = MainActivity.getContextOfApplication();
             String s = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "pod-"+ Calendar.getInstance().getTime().toString(), "");
 
-            Log.println(Log.ERROR,MainActivity.class.getName(),s);
             intent.putExtra("capture", s);
 
             startActivity(intent);
@@ -168,8 +167,19 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        Button mCapture = view.findViewById(R.id.capture);
+        Button mCapture = view.findViewById(R.id.buttonCapture);
+        Button mButtonPost = view.findViewById(R.id.buttonPost);
         LinearLayout mLogout = view.findViewById(R.id.profileButton);
+
+        mButtonPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(), PostActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
 
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
