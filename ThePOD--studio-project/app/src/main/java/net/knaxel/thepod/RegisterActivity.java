@@ -95,10 +95,9 @@ public class RegisterActivity extends AppCompatActivity {
                             userInfo.put("user_name", user_name);
                             userInfo.put("profile_image_url", "default");
 
-                             db.collection("users").get();
-                             db.collection("users").document(userId).set(userInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                             db.collection("users").document(userId).set(userInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
-                                public void onSuccess(DocumentReference documentReference) {
+                                public void onSuccess(Void documentReference) {
                                     Intent intent = new Intent(getApplication(), SplashScreenActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
