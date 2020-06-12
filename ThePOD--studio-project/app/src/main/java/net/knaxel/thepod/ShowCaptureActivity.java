@@ -2,6 +2,7 @@ package net.knaxel.thepod;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -81,6 +82,15 @@ public class ShowCaptureActivity extends AppCompatActivity implements UCropFragm
             @Override
             public void onClick(View v) {
                 sendToPost(b);
+            }
+        });
+        mButtonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(ShowCaptureActivity.this, ContactListActivity.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(ShowCaptureActivity.this, R.anim.slide_up, R.anim.still);
+                startActivity(intent, options.toBundle());
             }
         });
 

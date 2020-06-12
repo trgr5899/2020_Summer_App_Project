@@ -26,7 +26,7 @@ public class MessagingFragment extends Fragment {
     private RecyclerView recyclerView;
     private AdapterFeed mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<MessagePreview> messagePreviews = new ArrayList<>();
+    private final ArrayList<MessagePreview> messagePreviews = new ArrayList<>();
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);

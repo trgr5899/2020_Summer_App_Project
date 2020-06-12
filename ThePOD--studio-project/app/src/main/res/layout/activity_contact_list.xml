@@ -5,7 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ContactListActivity">
+    <FrameLayout
+        android:id="@+id/frameLayoutPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal"
+        android:background="@android:color/white">
+        <Button
+            android:id="@+id/buttonBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:backgroundTint="@android:color/black"
+            android:background="@drawable/ic_arrow" />
 
+    </FrameLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewContactList"
         android:layout_width="match_parent"

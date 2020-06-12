@@ -1,64 +1,97 @@
 package net.knaxel.thepod;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentPostingThread#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class FragmentPostingThread extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private EditText mSubject,mTitle,mDesc;
+    private String mediaSrc;
+    private ImageView mImageView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public FragmentPostingThread() {
+    public FragmentPostingThread(String mediaSrc) {
         // Required empty public constructor
+        this.mediaSrc = mediaSrc;
     }
+    public String getTitle(){
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentPostingThread.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentPostingThread newInstance(String param1, String param2) {
-        FragmentPostingThread fragment = new FragmentPostingThread();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        return mTitle.getText().toString();
+    }
+    public String getSubject(){
+        return mSubject.getText().toString();
+    }
+    public String getDescription(){
+        return mDesc.getText().toString();
+    }
+    public boolean alertSyntax(){
+
+        if(mSubject.getText().length() == 0 || mSubject.getText().toString().replace(" ", "").length() == 0 || mSubject.getText().length() > 64 ){
+
+            Toast.makeText(getContext(), "A thread subject must be 1-64 letters long!", Toast.LENGTH_LONG).show();
+            return false;
+        }if(mTitle.getText().length() == 0 || mTitle.getText().toString().replace(" ", "").length() == 0 || mTitle.getText().length() > 64 ){
+
+            Toast.makeText(getContext(), "A thread title must be 1-64 letters long!", Toast.LENGTH_LONG).show();
+            return false;
+        }if(mDesc.getText().length() > 200 || mTitle.getText().toString().replace(" ", "").length() == 0 || mTitle.getText().length() > 1500 ){
+
+            Toast.makeText(getContext(), "A thread post summary must be 200-1500 letters long!", Toast.LENGTH_LONG).show();
+            return false;
+        }else{
+
+            return true;
+        }
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_posting_thread, container, false);
+        View view = inflater.inflate(R.layout.fragment_posting_thread, container, false);
+        mImageView = view.findViewById(R.id.imageView);
+        mSubject = view.findViewById(R.id.postThreadSubject);
+        mTitle = view.findViewById(R.id.postThreadTitle);
+        mDesc = view.findViewById(R.id.postThreadDescription);
+        if (getArguments() != null) {
+        }
+
+        if (mediaSrc != null && mediaSrc !="") {
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), Uri.fromFile(new File(mediaSrc)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mImageView.setImageBitmap(bitmap);
+            // Inflate the layout for this fragment
+        }
+
+        return view;
     }
 }
