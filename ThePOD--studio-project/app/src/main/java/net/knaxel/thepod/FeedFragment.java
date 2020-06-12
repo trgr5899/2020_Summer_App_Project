@@ -3,6 +3,7 @@ package net.knaxel.thepod;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,151 +16,107 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
-    public static FeedFragment newInstance(){
+    public static FeedFragment newInstance() {
         FeedFragment fragment = new FeedFragment();
         return fragment;
     }
 
-    private RecyclerView storyView,feedView;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private Button buttonTest;
+    private RecyclerView storyView, feedView;
     private FeedFragment.AdapterStoryFeed mStoryAdapter;
     private FeedFragment.AdapterFeed mFeedAdapter;
-    private RecyclerView.LayoutManager storyLayoutManager,feedLayoutManager;
+    private RecyclerView.LayoutManager storyLayoutManager, feedLayoutManager;
 
     private ArrayList<StoryPreview> storyProfilePics = new ArrayList<>();
     private ArrayList<FeedObject> feedObjects = new ArrayList<>();
 
     @Override
-    public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
+        buttonTest = view.findViewById(R.id.buttonTest);
+        buttonTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                refreshFeed();
+            }
+        });
         storyView = (RecyclerView) view.findViewById(R.id.storyList);
-        storyLayoutManager=new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        storyLayoutManager = new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false);
         storyView.setLayoutManager(storyLayoutManager);
         mStoryAdapter = new FeedFragment.AdapterStoryFeed(this.getContext(), storyProfilePics);
         storyView.setAdapter(mStoryAdapter);
 
         feedView = (RecyclerView) view.findViewById(R.id.postFeed);
-        feedLayoutManager=new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false);
+        feedLayoutManager = new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false);
         feedView.setLayoutManager(feedLayoutManager);
-        mFeedAdapter = new FeedFragment.AdapterFeed(this.getContext(), feedObjects);
-        feedView.setAdapter(mFeedAdapter);
 
-        populateRecyclerView();
+        initFeed();
+
         return view;
     }
 
-    public void populateRecyclerView(){
-        FeedFragment.StoryPreview messagePreview1 = new FeedFragment.StoryPreview("test", false);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        storyProfilePics.add(messagePreview1);
-        FeedObject feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 0);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 1);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 2);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 0);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 1);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 2);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 0);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 1);
-        feedObjects.add(feedObject);
-        feedObject = new FeedObject("knaxel", "@helloworldd" , "src", "Heres my tweet", (char) 2);
-        feedObjects.add(feedObject);
+    public void initFeed() {
+            Query q = db.collection("post").whereEqualTo("author", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
+                        FeedObject f = new FeedObject(d.getString("author_displayname"), d.getString("author_displayname"), d.getString("author_displayname"), "post read", PostType.valueOf(d.getString("type")));
+                        feedObjects.add(f);
+                    }
+                    mFeedAdapter = new FeedFragment.AdapterFeed(getContext(), feedObjects);
+                    feedView.setAdapter(mFeedAdapter);
+                    Log.println(Log.ERROR, FeedFragment.class.getName(), feedObjects.toString());
 
-
+                }
+            });
     }
-    public class AdapterStoryFeed extends RecyclerView.Adapter<FeedFragment.AdapterStoryFeed.MyViewHolder> {
 
-        Context context;
-        ArrayList<FeedFragment.StoryPreview> storyCards ;
-        /*
-         *chatBoxes holds allt he MessagePreviews that store the sender information for jus the preview.
-         * */
-        public AdapterStoryFeed(Context context, ArrayList<FeedFragment.StoryPreview> chatBoxes) {
-            this.context = context;
-            this.storyCards = chatBoxes;
+    public void refreshFeed() {
+        for (String uuid : MainActivity.currentUser.getFollowArray()) {
+            Query q = db.collection("post").whereEqualTo("author", uuid);
+            Log.println(Log.ERROR, MainActivity.class.getName(),uuid);
+            Log.println(Log.ERROR, MainActivity.class.getName(),uuid.replace(" ", ""));
+            q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
+                        FeedObject f = new FeedObject(d.getString("author_displayname"), d.getString("author_displayname"), d.getString("author_displayname"), "post read", PostType.valueOf(d.getString("type")));
+                        feedObjects.add(f);
+                        Log.println(Log.ERROR, MainActivity.class.getName(), f.getAuthorDisplayName());
+                    }
 
-
-        }
-
-
-        @NonNull
-        @Override
-        public FeedFragment.AdapterStoryFeed.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_story, parent, false);
-                    return new FeedFragment.AdapterStoryFeed.MyViewHolder(view);
-
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-            final FeedFragment.StoryPreview storyPreview = storyCards.get(position);
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return storyCards.size();
-        }
-
-        /*
-         *custom view holder that stores protected view objects do be edited by Adapter.
-         * */
-        protected class MyViewHolder extends RecyclerView.ViewHolder {
-            CircleImageView mCircleImageView;
-
-
-            public MyViewHolder(@NonNull View itemView) {
-                super(itemView);
-                mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
-
-
-            }
+                }
+            });
         }
     }
+
+    public enum PostType {
+        STORY, STATUS, THREAD, MEDIA;
+    }
+
     public class AdapterFeed extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         Context context;
-        ArrayList<FeedFragment.FeedObject> feedObjects ;
+        ArrayList<FeedFragment.FeedObject> feedObjects;
+
         /*
          *chatBoxes holds allt he MessagePreviews that store the sender information for jus the preview.
          * */
@@ -171,7 +128,7 @@ public class FeedFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            return feedObjects.get(position).getType();
+            return feedObjects.get(position).getType().ordinal() - 1;
         }
 
         @NonNull
@@ -199,18 +156,18 @@ public class FeedFragment extends Fragment {
             final FeedFragment.FeedObject feedObject = feedObjects.get(position);
             switch (holder.getItemViewType()) {
                 case 0:
-                    ThreadViewHolder threadViewHolder = (ThreadViewHolder)holder;
+                    ThreadViewHolder threadViewHolder = (ThreadViewHolder) holder;
 
-                    threadViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
+                    threadViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
 
                     break;
                 case 1:
-                    StatusViewHolder statusViewHolder = (StatusViewHolder)holder;
-                    statusViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
+                    StatusViewHolder statusViewHolder = (StatusViewHolder) holder;
+                    statusViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
                     break;
                 case 2:
-                    MediaViewHolder mediaViewHolder = (MediaViewHolder)holder;
-                    mediaViewHolder.mAuthorUsername.setText("@"+ feedObject.authorUsername);
+                    MediaViewHolder mediaViewHolder = (MediaViewHolder) holder;
+                    mediaViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
                     break;
             }
         }
@@ -223,12 +180,13 @@ public class FeedFragment extends Fragment {
         /*
          *custom view holder that stores protected view objects do be edited by Adapter.
          * */
-        protected class FeedObjViewHolder extends RecyclerView.ViewHolder{
+        protected class FeedObjViewHolder extends RecyclerView.ViewHolder {
 
-            Button mLikeButton ;
+            Button mLikeButton;
             TextView mAuthorUsername;
             TextView mAuthorDisplayname;
             boolean liked = false;
+
             public FeedObjViewHolder(@NonNull View itemView) {
                 super(itemView);
                 mAuthorUsername = itemView.findViewById(R.id.author_username);
@@ -236,62 +194,65 @@ public class FeedFragment extends Fragment {
                 mLikeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(liked) {
+                        if (liked) {
                             mLikeButton.setBackgroundResource(R.drawable.ic_heart);
-                            liked =false;
-                        }else{
-                            liked =true;
+                            liked = false;
+                        } else {
+                            liked = true;
                             mLikeButton.setBackgroundResource(R.drawable.ic_heart_colored);
                         }
                     }
                 });
             }
         }
+
         protected class ThreadViewHolder extends FeedObjViewHolder {
             CircleImageView mCircleImageView;
 
             public ThreadViewHolder(@NonNull View itemView) {
                 super(itemView);
-                mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
+                //mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
 
 
             }
         }
+
         protected class MediaViewHolder extends FeedObjViewHolder {
             CircleImageView mCircleImageView;
 
 
             public MediaViewHolder(@NonNull View itemView) {
                 super(itemView);
-                mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
+                // mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
 
 
             }
         }
+
         protected class StatusViewHolder extends FeedObjViewHolder {
             CircleImageView mCircleImageView;
 
 
             public StatusViewHolder(@NonNull View itemView) {
                 super(itemView);
-                mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
+                // mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
 
 
             }
         }
     }
-    public class FeedObject{
 
-        String authorDisplayname, authorUsername,authorProfilePicture,data;
-        char type;
+    public class FeedObject {
 
-        public FeedObject(String authorDisplayName, String authorUserName, String authorProfilePicture, String data, char type) {
+        String authorDisplayname, authorUsername, authorProfilePicture, data;
+        PostType type;
+
+        public FeedObject(String authorDisplayName, String authorUserName, String authorProfilePicture, String data, PostType type) {
             this.authorDisplayname = authorDisplayName;
             this.authorUsername = authorUserName;
             this.authorProfilePicture = authorProfilePicture;
             this.data = data;
+
             this.type = type;
         }
 
@@ -327,15 +288,67 @@ public class FeedFragment extends Fragment {
             this.data = data;
         }
 
-        public int getType() {
-            return (int)type;
+        public PostType getType() {
+            return type;
         }
 
-        public void setType(char type) {
+        public void setType(PostType type) {
             this.type = type;
         }
     }
-    public class StoryPreview{
+
+    public class AdapterStoryFeed extends RecyclerView.Adapter<FeedFragment.AdapterStoryFeed.MyViewHolder> {
+
+        Context context;
+        ArrayList<FeedFragment.StoryPreview> storyCards;
+
+        /*
+         *chatBoxes holds allt he MessagePreviews that store the sender information for jus the preview.
+         * */
+        public AdapterStoryFeed(Context context, ArrayList<FeedFragment.StoryPreview> chatBoxes) {
+            this.context = context;
+            this.storyCards = chatBoxes;
+
+
+        }
+
+
+        @NonNull
+        @Override
+        public FeedFragment.AdapterStoryFeed.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_story, parent, false);
+            return new FeedFragment.AdapterStoryFeed.MyViewHolder(view);
+
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+            final FeedFragment.StoryPreview storyPreview = storyCards.get(position);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return storyCards.size();
+        }
+
+        /*
+         *custom view holder that stores protected view objects do be edited by Adapter.
+         * */
+        protected class MyViewHolder extends RecyclerView.ViewHolder {
+            CircleImageView mCircleImageView;
+
+
+            public MyViewHolder(@NonNull View itemView) {
+                super(itemView);
+                mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
+
+
+            }
+        }
+    }
+
+    public class StoryPreview {
         String profilePic;
         boolean read;
 
