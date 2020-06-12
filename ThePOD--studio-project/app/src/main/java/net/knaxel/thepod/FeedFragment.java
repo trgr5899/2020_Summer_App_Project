@@ -3,10 +3,13 @@ package net.knaxel.thepod;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +18,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import net.knaxel.thepod.Adapter.UserAdapter;
+import net.knaxel.thepod.Model.User;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,14 +39,18 @@ public class FeedFragment extends Fragment {
         return fragment;
     }
 
-    private RecyclerView storyView,feedView;
+    private RecyclerView storyView,feedView,searchView;
     private FeedFragment.AdapterStoryFeed mStoryAdapter;
     private FeedFragment.AdapterFeed mFeedAdapter;
     private RecyclerView.LayoutManager storyLayoutManager,feedLayoutManager;
+    private UserAdapter userAdapter;
 
+    private List<User> mUsers;
     private ArrayList<StoryPreview> storyProfilePics = new ArrayList<>();
     private ArrayList<FeedObject> feedObjects = new ArrayList<>();
 
+
+    EditText search_bar;
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
@@ -49,10 +67,84 @@ public class FeedFragment extends Fragment {
         mFeedAdapter = new FeedFragment.AdapterFeed(this.getContext(), feedObjects);
         feedView.setAdapter(mFeedAdapter);
 
+        searchView=view.findViewById(R.id.search_recycler);
+        searchView.setHasFixedSize(true);
+        searchView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        search_bar=view.findViewById(R.id.search_bar);
+        mUsers=new ArrayList<>();
+        userAdapter =new UserAdapter(getContext(),mUsers);
+        searchView.setAdapter(userAdapter);
+        readUsers();
+        search_bar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchUsers(s.toString().toLowerCase());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         populateRecyclerView();
         return view;
     }
 
+    private void searchUsers(String s)
+    {
+        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
+                .startAt(s).endAt(s+"\uf8ff");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+            mUsers.clear();
+            for(DataSnapshot snapshot: dataSnapshot.getChildren())
+            {
+                User user=snapshot.getValue(User.class);
+                mUsers.add(user);
+
+            }
+            userAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void readUsers()
+    {
+        DatabaseReference reference=FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(search_bar.getText().toString().equals(""))
+                {
+                    mUsers.clear();
+                    for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                        User user=snapshot.getValue(User.class);
+                        mUsers.add(user);
+                    }
+                    userAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void populateRecyclerView(){
         FeedFragment.StoryPreview messagePreview1 = new FeedFragment.StoryPreview("test", false);
         storyProfilePics.add(messagePreview1);
