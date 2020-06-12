@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,7 +51,7 @@ public class FeedFragment extends Fragment {
     private ArrayList<FeedObject> feedObjects = new ArrayList<>();
 
 
-    EditText search_bar;
+    SearchView search_bar;
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
@@ -71,26 +72,20 @@ public class FeedFragment extends Fragment {
         searchView.setHasFixedSize(true);
         searchView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        search_bar=view.findViewById(R.id.search_bar);
+        search_bar  = view.findViewById(R.id.search_bar);
         mUsers=new ArrayList<>();
         userAdapter =new UserAdapter(getContext(),mUsers);
-        searchView.setAdapter(userAdapter);
+        //searchView.setAdapter(userAdapter);
         readUsers();
-        search_bar.addTextChangedListener(new TextWatcher() {
+        search_bar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchUsers(s.toString().toLowerCase());
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public boolean onQueryTextChange(String newText) {
+                return false;
             }
         });
 
@@ -128,7 +123,7 @@ public class FeedFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(search_bar.getText().toString().equals(""))
+                if(search_bar.getQuery().toString().equals(""))
                 {
                     mUsers.clear();
                     for(DataSnapshot snapshot: dataSnapshot.getChildren()){
