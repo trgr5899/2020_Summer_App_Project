@@ -24,6 +24,7 @@
                 android:background="@android:color/white">
 
                 <TextView
+                    android:id="@+id/user_username_preview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|left"
@@ -36,12 +37,13 @@
 
                 <Button
                     android:id="@+id/button_logout"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="90dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="right|center_vertical"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/ic_settings_white_24dp"
-                    android:backgroundTint="@android:color/black" />
+                    android:layout_margin="4dp"
+                    android:text="Logout"
+                    android:textColor="@null"
+                    android:background="@android:color/holo_blue_light"/>
             </FrameLayout>
 
             <View
@@ -68,7 +70,7 @@
                     android:foreground="@drawable/outline_circle">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_pic"
+                        android:id="@+id/user_profilePic"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:layout_margin="5dp"
@@ -95,6 +97,8 @@
                     android:layout_marginRight="3dp">
 
                     <TextView
+
+                        android:id="@+id/user_postcount"
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -128,6 +132,7 @@
                     android:layout_marginRight="10dp">
 
                     <TextView
+                        android:id="@+id/user_followingcount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -139,6 +144,7 @@
                         android:textColor="@color/colorAccent"
                         android:textSize="8pt"></TextView>
                     <TextView
+                        android:id="@+id/user_followercount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -195,6 +201,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
             <TextView
+                android:id="@+id/user_displayname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -207,6 +214,7 @@
                 android:textStyle="bold"></TextView>
 
             <TextView
+                android:id="@+id/user_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -221,6 +229,7 @@
 
 
             <TextView
+                android:id="@+id/user_accounttype"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -231,6 +240,7 @@
                 android:textSize="8pt"
                 android:textStyle="italic"></TextView>
             <TextView
+                android:id="@+id/user_website"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -245,6 +255,7 @@
 
                 android:textSize="7pt"></TextView>
             <TextView
+                android:id="@+id/user_biography"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

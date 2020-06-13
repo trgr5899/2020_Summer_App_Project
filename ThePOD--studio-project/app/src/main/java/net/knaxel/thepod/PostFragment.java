@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -43,13 +44,21 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import net.knaxel.thepod.pod.POD;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Calendar;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment implements SurfaceHolder.Callback {
 
+    private CircleImageView imageView;
+    private TextView mDisplayName;
     final int CAMERA_REQUEST_CODE = 0;
     private boolean safeToTakePicture = false;
     final Camera camera = Camera.open();
@@ -167,6 +176,19 @@ public class PostFragment extends Fragment implements SurfaceHolder.Callback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
+        imageView = view.findViewById(R.id.user_profilePic);
+        URL url = null;
+        try {
+            url = new URL(POD.USER.getProfilePicURL());
+            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            imageView.setImageBitmap(bmp);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mDisplayName = view.findViewById(R.id.user_displayname);
+        mDisplayName.setText(POD.USER.getDisplayname() );
         Button mCapture = view.findViewById(R.id.buttonCapture);
         Button mButtonPost = view.findViewById(R.id.buttonPost);
         LinearLayout mLogout = view.findViewById(R.id.profileButton);

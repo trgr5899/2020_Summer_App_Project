@@ -68,6 +68,7 @@
         />
 
     <ImageView
+        android:id="@+id/media_post"
         android:layout_width="match_parent"
         android:layout_height="267dp"
         android:background="@android:color/darker_gray"
@@ -75,6 +76,7 @@
 
     </ImageView>
     <TextView
+        android:id="@+id/media_caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

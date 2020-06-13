@@ -2,6 +2,9 @@ package net.knaxel.thepod;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.knaxel.thepod.pod.POD;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -25,19 +34,27 @@ public class MessagingFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private AdapterFeed mAdapter;
+    private CircleImageView imageView;
     private RecyclerView.LayoutManager layoutManager;
     private final ArrayList<MessagePreview> messagePreviews = new ArrayList<>();
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);
-
+        imageView = view.findViewById(R.id.user_profilePic);
+        URL url = null;
+        try {
+            url = new URL(POD.USER.getProfilePicURL());
+            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            imageView.setImageBitmap(bmp);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         recyclerView = (RecyclerView) view.findViewById(R.id.messageFeed);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new AdapterFeed(this.getContext(), messagePreviews);

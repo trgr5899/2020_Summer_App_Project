@@ -34,7 +34,6 @@ import net.knaxel.thepod.pod.PodUser;
 public class MainActivity extends AppCompatActivity  {
     public static Context contextOfApplication;
 
-    public static PodUser currentUser ;
     private static PostFragment postfragment = new PostFragment();
     private static MessagingFragment messagingfragment = new MessagingFragment();
 
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);//will hide the title
         getSupportActionBar().hide();
-        loadUser();
         setContentView(R.layout.activity_main);
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -70,14 +68,6 @@ public class MainActivity extends AppCompatActivity  {
             public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
 
                 viewPager.setCurrentItem(getSelectedItem(bottomNavigationView));
-            }
-        });
-    }
-    public void loadUser(){
-        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                currentUser = new PodUser(FirebaseAuth.getInstance().getCurrentUser().getUid(),task.getResult().getData() );
             }
         });
     }

@@ -34,6 +34,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import net.knaxel.thepod.pod.POD;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -156,8 +158,11 @@ public class PostActivity extends AppCompatActivity {
 
                 post.put("timestamp", time);
                 post.put("author", auth.getCurrentUser().getUid());
-                post.put("author_displayname", "test"+auth.getCurrentUser().getDisplayName());
-                post.put("author_username",auth.getCurrentUser().getDisplayName());
+                post.put("author_displayname", POD.USER.getDisplayname());
+                post.put("author_username", POD.USER.getUsername());
+                post.put("likes", 0);
+                post.put("reposts", 0);
+                post.put("comments", 0);
                 post.put("media", Arrays.asList(mediaUpload));
 
                 if (tabLayout.getSelectedTabPosition() == 0) {

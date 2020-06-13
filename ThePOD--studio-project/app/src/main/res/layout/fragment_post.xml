@@ -19,7 +19,7 @@
         android:background="@drawable/background_round_corners_black_35dp"
         android:paddingRight="10dp">
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_pic"
+        android:id="@+id/user_profilePic"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_margin="5dp"
@@ -27,7 +27,7 @@
 
     </de.hdodenhof.circleimageview.CircleImageView>
     <TextView
-        android:id="@+id/display_name"
+        android:id="@+id/user_displayname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="8pt"

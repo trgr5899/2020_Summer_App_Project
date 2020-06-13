@@ -3,6 +3,8 @@ package net.knaxel.thepod.pod;
 import android.accounts.Account;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 import net.knaxel.thepod.FeedFragment;
@@ -12,13 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-enum AccountType {
-    ARTIST,INFLUENCER,ENTERTAINER,PERSONAL,CORPORATE,FANPAGE;
-}
 
 public class PodUser {
 
-    private String uuid, displayname,username,email,profilePicURL,bio,phone;
+    public enum AccountType {
+        ARTIST, INFLUENCER, ENTERTAINER, PERSONAL, CORPORATE, FANPAGE;
+
+        @NonNull
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+    }
+
+    private String uuid, displayname, username, email, profilePicURL, bio, phone, website;
     private AccountType accountType;
     private List<String> following, followers;
 
@@ -34,17 +43,33 @@ public class PodUser {
         this.following = following;
         this.followers = followers;
     }
-    public PodUser(String uuid, Map<String, Object> userData){
+
+    public PodUser(String uuid, Map<String, Object> userData) {
         this.uuid = uuid;
         this.displayname = (String) userData.get("display_name");
         this.username = (String) userData.get("user_name");
         this.email = (String) userData.get("email");
         this.profilePicURL = (String) userData.get("profile_image_url");
-        if(userData.containsKey("biography")) this.bio = (String) userData.get("biography");
-        if(userData.containsKey("phone")) this.phone = (String) userData.get("phone");
-        if(userData.containsKey("account_type")) this.accountType = AccountType.valueOf((String) userData.get("account_type"));
-        if(userData.containsKey("following")) this.following = (List<String>) userData.get("following"); else this.following = new ArrayList<>();
-        if(userData.containsKey("followers")) this.followers = (List<String>) userData.get("followers"); else this.followers = new ArrayList<>();
+        if (userData.containsKey("biography")) this.bio = (String) userData.get("biography");
+        if (userData.containsKey("phone")) this.phone = (String) userData.get("phone");
+        if (userData.containsKey("account_type"))
+            this.accountType = AccountType.valueOf((String) userData.get("account_type"));
+        else
+            this.accountType = AccountType.PERSONAL;
+        if (userData.containsKey("following"))
+            this.following = (List<String>) userData.get("following");
+        else this.following = new ArrayList<>();
+        if (userData.containsKey("followers"))
+            this.followers = (List<String>) userData.get("followers");
+        else this.followers = new ArrayList<>();
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public String getUuid() {

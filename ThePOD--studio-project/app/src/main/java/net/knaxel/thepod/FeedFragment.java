@@ -3,7 +3,6 @@ package net.knaxel.thepod;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import net.knaxel.thepod.pod.POD;
+
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.Arrays;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,7 +45,7 @@ public class FeedFragment extends Fragment {
     private RecyclerView.LayoutManager storyLayoutManager, feedLayoutManager;
 
     private ArrayList<StoryPreview> storyProfilePics = new ArrayList<>();
-    private ArrayList<FeedObject> feedObjects = new ArrayList<>();
+    private ArrayList<FeedItem> feedObjects = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,62 +75,82 @@ public class FeedFragment extends Fragment {
     }
 
     public void initFeed() {
-            Query q = db.collection("post").whereEqualTo("author", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            Query q = db.collection("post").whereEqualTo("author", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("timestamp", Query.Direction.DESCENDING).limit(3);;
             q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     for (DocumentSnapshot d : task.getResult().getDocuments()) {
-                        FeedObject f = new FeedObject(d.getString("author_displayname"), d.getString("author_displayname"), d.getString("author_displayname"), "post read", PostType.valueOf(d.getString("type")));
-                        feedObjects.add(f);
+                        PostType type = PostType.valueOf(d.getString("type").toUpperCase());
+                        switch(type){
+                            case MEDIA: {
+                                feedObjects.add(new MediaFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("caption"),(List<String>)d.get("hashtags")));
+                                continue;
+                            }
+                            case STATUS: {
+                                feedObjects.add(new StatusFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("status"),(List<String>)d.get("hashtags")));
+                                continue;
+                            }
+                            case THREAD: {
+                                feedObjects.add(new ThreadFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("subect"),d.getString("title"),d.getString("summary")));
+                                continue;
+                            }
+                            default:{ continue;}
+                        }
                     }
                     mFeedAdapter = new FeedFragment.AdapterFeed(getContext(), feedObjects);
                     feedView.setAdapter(mFeedAdapter);
-                    Log.println(Log.ERROR, FeedFragment.class.getName(), feedObjects.toString());
 
                 }
             });
     }
 
     public void refreshFeed() {
-        for (String uuid : MainActivity.currentUser.getFollowArray()) {
-            Query q = db.collection("post").whereEqualTo("author", uuid);
-            Log.println(Log.ERROR, MainActivity.class.getName(),uuid);
-            Log.println(Log.ERROR, MainActivity.class.getName(),uuid.replace(" ", ""));
+
+        for (String uuid : POD.USER.getFollowArray()) {
+            Query q = db.collection("post").orderBy("timestamp", Query.Direction.DESCENDING).whereEqualTo("author", uuid.replace(" ", "")).limit(3);
             q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
-                        FeedObject f = new FeedObject(d.getString("author_displayname"), d.getString("author_displayname"), d.getString("author_displayname"), "post read", PostType.valueOf(d.getString("type")));
-                        feedObjects.add(f);
-                        Log.println(Log.ERROR, MainActivity.class.getName(), f.getAuthorDisplayName());
+                    if(task.getResult().getDocuments().size() == 0){
                     }
-
+                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
+                        FeedItem f = new FeedItem(d.getString("author_displayname"), d.getString("author_username"), d.getString("author_displayname"), Arrays.asList(new String[]{"src"}), PostType.valueOf(d.getString("type")));
+                        feedObjects.add(f);
+                    }
+                    //mFeedAdapter = new FeedFragment.AdapterFeed(getContext(), feedObjects);
+                    //mFeedAdapter.addNewFeedObjects(feedObjects);
+                    mFeedAdapter.notifyDataSetChanged();
                 }
             });
         }
     }
 
     public enum PostType {
-        STORY, STATUS, THREAD, MEDIA;
+        THREAD, STATUS, MEDIA,STORY;
     }
 
     public class AdapterFeed extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         Context context;
-        ArrayList<FeedFragment.FeedObject> feedObjects;
+        ArrayList<FeedItem> feedObjects;
 
         /*
          *chatBoxes holds allt he MessagePreviews that store the sender information for jus the preview.
          * */
-        public AdapterFeed(Context context, ArrayList<FeedFragment.FeedObject> feedObjects) {
+        public AdapterFeed(Context context, ArrayList<FeedItem> feedObjects) {
             this.context = context;
 
             this.feedObjects = feedObjects;
         }
+        public void addNewFeedObjects(List<FeedItem> feed)
+        {
+            this.feedObjects.addAll(feed);
+            notifyDataSetChanged();
+        }
 
         @Override
         public int getItemViewType(int position) {
-            return feedObjects.get(position).getType().ordinal() - 1;
+            return feedObjects.get(position).getType().ordinal();
         }
 
         @NonNull
@@ -153,21 +175,30 @@ public class FeedFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-            final FeedFragment.FeedObject feedObject = feedObjects.get(position);
             switch (holder.getItemViewType()) {
                 case 0:
                     ThreadViewHolder threadViewHolder = (ThreadViewHolder) holder;
-
-                    threadViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
+                    ThreadFeedItem threadItem = (ThreadFeedItem) feedObjects.get(position);
+                    threadViewHolder.mAuthorUsername.setText("@" + threadItem.authorUsername);
+                    threadViewHolder.mSubject.setText(threadItem.subject);
+                    threadViewHolder.mTitle.setText(threadItem.title);
+                    threadViewHolder.mSummary.setText(threadItem.summary);
+                    //threadViewHolder.setPicture(feedObject);
 
                     break;
                 case 1:
+                    StatusFeedItem statusItem = (StatusFeedItem) feedObjects.get(position);
                     StatusViewHolder statusViewHolder = (StatusViewHolder) holder;
-                    statusViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
+                    statusViewHolder.mAuthorUsername.setText("@" + statusItem.authorUsername);
+                    statusViewHolder.mAuthorDisplayname.setText( statusItem.authorDisplayname);
                     break;
                 case 2:
+                    MediaFeedItem mediaItem = (MediaFeedItem) feedObjects.get(position);
                     MediaViewHolder mediaViewHolder = (MediaViewHolder) holder;
-                    mediaViewHolder.mAuthorUsername.setText("@" + feedObject.authorUsername);
+                    mediaViewHolder.mAuthorUsername.setText("@" + mediaItem.authorUsername);
+                    mediaViewHolder.mAuthorDisplayname.setText(mediaItem.authorDisplayname);
+                    mediaViewHolder.mCaption.setText(mediaItem.getCaption());
+
                     break;
             }
         }
@@ -189,6 +220,7 @@ public class FeedFragment extends Fragment {
 
             public FeedObjViewHolder(@NonNull View itemView) {
                 super(itemView);
+                mAuthorDisplayname = itemView.findViewById(R.id.author_displayname);
                 mAuthorUsername = itemView.findViewById(R.id.author_username);
                 mLikeButton = itemView.findViewById(R.id.likeButton);
                 mLikeButton.setOnClickListener(new View.OnClickListener() {
@@ -207,69 +239,172 @@ public class FeedFragment extends Fragment {
         }
 
         protected class ThreadViewHolder extends FeedObjViewHolder {
+
+            TextView mSubject,mTitle,mSummary;
             CircleImageView mCircleImageView;
 
             public ThreadViewHolder(@NonNull View itemView) {
                 super(itemView);
                 //mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
+                mSubject = itemView.findViewById(R.id.thread_subject);
+                mTitle = itemView.findViewById(R.id.thread_title);
+                mSummary = itemView.findViewById(R.id.thread_description);
 
             }
         }
 
         protected class MediaViewHolder extends FeedObjViewHolder {
-            CircleImageView mCircleImageView;
-
+            TextView mCaption;
 
             public MediaViewHolder(@NonNull View itemView) {
                 super(itemView);
-                // mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
+                mCaption = itemView.findViewById(R.id.media_caption);
 
             }
         }
 
         protected class StatusViewHolder extends FeedObjViewHolder {
-            CircleImageView mCircleImageView;
+            TextView status;
 
 
             public StatusViewHolder(@NonNull View itemView) {
                 super(itemView);
                 // mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-
+                status = itemView.findViewById(R.id.status_status);
 
             }
         }
     }
 
-    public class FeedObject {
 
-        String authorDisplayname, authorUsername, authorProfilePicture, data;
+    public class ThreadFeedItem extends FeedItem {
+
+        String subject,title,summary;
+
+        public ThreadFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String subject, String title, String summary) {
+            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+            this.subject = subject;
+            this.title = title;
+            this.summary = summary;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSummary() {
+            return summary;
+        }
+
+        public void setSummary(String summary) {
+            this.summary = summary;
+        }
+    }
+    public class StatusFeedItem extends FeedItem {
+
+        String status;
+        List<String> hashtags;
+
+        public StatusFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String status,List<String> hashtags) {
+            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+            this.status = status;
+            this.hashtags = hashtags;
+        }
+
+        public List<String> getHashtags() {
+            return hashtags;
+        }
+
+        public void setHashtags(List<String> hashtags) {
+            this.hashtags = hashtags;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+    }
+    public class MediaFeedItem extends FeedItem {
+
+        String caption;
+        List<String> hashtags;
+
+        public MediaFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String caption,List<String> hashtags) {
+            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+            this.caption = caption;
+            this.hashtags = hashtags;
+        }
+
+
+        public List<String> getHashtags() {
+            return hashtags;
+        }
+
+        public void setHashtags(List<String> hashtags) {
+            this.hashtags = hashtags;
+        }
+
+        public String getCaption() {
+            return caption;
+        }
+
+        public void setCaption(String caption) {
+            this.caption = caption;
+        }
+    }
+    public class FeedItem {
+
+        String authorDisplayname, authorUsername, authorProfilePicture;
+        List<String> media;
         PostType type;
 
-        public FeedObject(String authorDisplayName, String authorUserName, String authorProfilePicture, String data, PostType type) {
-            this.authorDisplayname = authorDisplayName;
-            this.authorUsername = authorUserName;
-            this.authorProfilePicture = authorProfilePicture;
-            this.data = data;
+        @Override
+        public String toString() {
+            return "FeedItem{" +
+                    "authorDisplayname='" + authorDisplayname + '\'' +
+                    ", authorUsername='" + authorUsername + '\'' +
+                    ", authorProfilePicture='" + authorProfilePicture + '\'' +
+                    ", type=" + type +
+                    '}';
+        }
 
+        public FeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type) {
+            this.authorDisplayname = authorDisplayname;
+            this.authorUsername = authorUsername;
+            this.authorProfilePicture = authorProfilePicture;
+            this.media = media;
             this.type = type;
         }
 
-        public String getAuthorDisplayName() {
+        public String getAuthorDisplayname() {
             return authorDisplayname;
         }
 
-        public void setAuthorDisplayName(String authorDisplayName) {
-            this.authorDisplayname = authorDisplayName;
+        public void setAuthorDisplayname(String authorDisplayname) {
+            this.authorDisplayname = authorDisplayname;
         }
 
-        public String getAuthorUserName() {
+        public String getAuthorUsername() {
             return authorUsername;
         }
 
-        public void setAuthorUserName(String authorUserName) {
-            this.authorUsername = authorUserName;
+        public void setAuthorUsername(String authorUsername) {
+            this.authorUsername = authorUsername;
         }
 
         public String getAuthorProfilePicture() {
@@ -280,12 +415,12 @@ public class FeedFragment extends Fragment {
             this.authorProfilePicture = authorProfilePicture;
         }
 
-        public String getData() {
-            return data;
+        public List<String> getMedia() {
+            return media;
         }
 
-        public void setData(String data) {
-            this.data = data;
+        public void setMedia(List<String> media) {
+            this.media = media;
         }
 
         public PostType getType() {
