@@ -16,9 +16,13 @@ Event Listener Names :
 XML layout's :
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;layouts/activities/fragments
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**"type_name"** -------------------------- e.g. activity_main.xml, fragment_posting_media, etc
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drawables
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**"category_name"** -------------------- e.g. ic_heart.xml
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**"category_category_name"** ------ e.g. background_round_corners.xml
 
 @+id names :
