@@ -1,7 +1,7 @@
 
 # CONVECTIONS :
 
-ViewType Class Variable's :
+ViewType Class Variable's :\n
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**"mTypeName"** --------------------------- e.g. mTextViewDisplayname
 
 Classnames :
