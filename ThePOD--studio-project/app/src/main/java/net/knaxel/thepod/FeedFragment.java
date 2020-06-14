@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -26,7 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import net.knaxel.thepod.pod.POD;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -38,6 +37,7 @@ public class FeedFragment extends Fragment {
     }
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    long feedtime = Calendar.getInstance().getTime().getTime();
     private Button buttonTest;
     private RecyclerView storyView, feedView;
     private FeedFragment.AdapterStoryFeed mStoryAdapter;
@@ -75,26 +75,65 @@ public class FeedFragment extends Fragment {
     }
 
     public void initFeed() {
-            Query q = db.collection("post").whereEqualTo("author", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("timestamp", Query.Direction.DESCENDING).limit(3);;
+
+        Query q = db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(5);
+        for (String uuid : POD.USER.getFollowArray()) {
+            q.whereEqualTo("author", uuid.replace(" ", ""));
+        }
             q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
+                    for (int i = 0; i < task.getResult().getDocuments().size(); i++) {
+                        DocumentSnapshot d =task.getResult().getDocuments().get(i);
                         PostType type = PostType.valueOf(d.getString("type").toUpperCase());
-                        switch(type){
+                        if(i == 5){
+
+                            feedtime = d.getLong("timestamp");
+                        }
+                        switch (type) {
                             case MEDIA: {
-                                feedObjects.add(new MediaFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("caption"),(List<String>)d.get("hashtags")));
+                                feedObjects.add(new MediaFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>) d.get("media"),
+                                        type,
+                                        d.getDouble("likes").longValue(), d.getDouble("reposts").longValue(), d.getDouble("comments").longValue(),
+                                        d.getString("caption"),
+                                        (List<String>) d.get("hashtags")));
                                 continue;
                             }
                             case STATUS: {
-                                feedObjects.add(new StatusFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("status"),(List<String>)d.get("hashtags")));
+                                feedObjects.add(new StatusFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>) d.get("media"),
+                                        type,
+                                        d.getDouble("likes").longValue(), d.getDouble("reposts").longValue(), d.getDouble("comments").longValue(),
+                                        d.getString("status"),
+                                        (List<String>) d.get("hashtags")));
                                 continue;
                             }
                             case THREAD: {
-                                feedObjects.add(new ThreadFeedItem(d.getString("author_displayname"),d.getString("author_username"),d.getString("author_profilePicURL"),(List<String>)d.get("media"),type,d.getString("subect"),d.getString("title"),d.getString("summary")));
+                                feedObjects.add(new ThreadFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>) d.get("media"),
+                                        type,
+                                        d.getDouble("likes").longValue(), d.getDouble("reposts").longValue(), d.getDouble("comments").longValue(),
+                                        d.getString("subect"),
+                                        d.getString("title"),
+                                        d.getString("summary")));
                                 continue;
                             }
-                            default:{ continue;}
+                            default: {
+                                continue;
+                            }
                         }
                     }
                     mFeedAdapter = new FeedFragment.AdapterFeed(getContext(), feedObjects);
@@ -102,20 +141,68 @@ public class FeedFragment extends Fragment {
 
                 }
             });
+
     }
 
     public void refreshFeed() {
 
         for (String uuid : POD.USER.getFollowArray()) {
-            Query q = db.collection("post").orderBy("timestamp", Query.Direction.DESCENDING).whereEqualTo("author", uuid.replace(" ", "")).limit(3);
+            Query q = db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).whereLessThanOrEqualTo("timestamp", feedtime).whereEqualTo("author", uuid.replace(" ", "")).limit(5);
             q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.getResult().getDocuments().size() == 0){
                     }
-                    for (DocumentSnapshot d : task.getResult().getDocuments()) {
-                        FeedItem f = new FeedItem(d.getString("author_displayname"), d.getString("author_username"), d.getString("author_displayname"), Arrays.asList(new String[]{"src"}), PostType.valueOf(d.getString("type")));
-                        feedObjects.add(f);
+                    for (int i = 0; i < task.getResult().getDocuments().size(); i++) {
+                        DocumentSnapshot d =task.getResult().getDocuments().get(i);
+                        PostType type = PostType.valueOf(d.getString("type").toUpperCase());
+                        if(i == 5){
+
+                            feedtime = d.getLong("timestamp");
+                        }
+                        switch(type){
+                            case MEDIA: {
+                                feedObjects.add(new MediaFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>)d.get("media"),
+                                        type,
+                                        d.getLong("likes"),d.getLong("reposts"),d.getLong("comments"),
+                                        d.getString("caption"),
+                                        (List<String>)d.get("hashtags")));
+                                continue;
+                            }
+                            case STATUS: {
+                                feedObjects.add(new StatusFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>)d.get("media"),
+                                        type,
+                                        d.getLong("likes"),d.getLong("reposts"),d.getLong("comments"),
+                                        d.getString("status"),
+                                        (List<String>)d.get("hashtags")));
+                                continue;
+                            }
+                            case THREAD: {
+                                feedObjects.add(new ThreadFeedItem(
+                                        d.getId(),
+                                        d.getString("author_displayname"),
+                                        d.getString("author_username"),
+                                        d.getString("author_profilePicURL"),
+                                        (List<String>)d.get("media"),
+                                        type,
+                                        d.getLong("likes"),d.getLong("reposts"),d.getLong("comments"),
+                                        d.getString("subect"),
+                                        d.getString("title"),
+                                        d.getString("summary")));
+                                continue;
+                            }
+                            default:{ continue;}
+                        }
                     }
                     //mFeedAdapter = new FeedFragment.AdapterFeed(getContext(), feedObjects);
                     //mFeedAdapter.addNewFeedObjects(feedObjects);
@@ -179,24 +266,34 @@ public class FeedFragment extends Fragment {
                 case 0:
                     ThreadViewHolder threadViewHolder = (ThreadViewHolder) holder;
                     ThreadFeedItem threadItem = (ThreadFeedItem) feedObjects.get(position);
-                    threadViewHolder.mAuthorUsername.setText("@" + threadItem.authorUsername);
+                    threadViewHolder.mAuthorUsername.setText("@" + threadItem.getAuthorUsername());
                     threadViewHolder.mSubject.setText(threadItem.subject);
                     threadViewHolder.mTitle.setText(threadItem.title);
                     threadViewHolder.mSummary.setText(threadItem.summary);
+                    threadViewHolder.mLikeCount.setText(threadItem.getLikeCount()+"");
+                    threadViewHolder.mRepostCount.setText(threadItem.getRepostCount()+"");
+                    threadViewHolder.mCommentCount.setText(threadItem.getCommentCount()+"");
                     //threadViewHolder.setPicture(feedObject);
 
                     break;
                 case 1:
                     StatusFeedItem statusItem = (StatusFeedItem) feedObjects.get(position);
                     StatusViewHolder statusViewHolder = (StatusViewHolder) holder;
-                    statusViewHolder.mAuthorUsername.setText("@" + statusItem.authorUsername);
-                    statusViewHolder.mAuthorDisplayname.setText( statusItem.authorDisplayname);
+                    statusViewHolder.mAuthorUsername.setText("@" + statusItem.getAuthorUsername());
+                    statusViewHolder.mAuthorDisplayname.setText( statusItem.getAuthorDisplayname());
+                    statusViewHolder.mLikeCount.setText(statusItem.getLikeCount()+"");
+                    statusViewHolder.mRepostCount.setText(statusItem.getRepostCount()+"");
+                    statusViewHolder.mCommentCount.setText(statusItem.getCommentCount()+"");
+                    statusViewHolder.mStatus.setText( statusItem.status);
                     break;
                 case 2:
                     MediaFeedItem mediaItem = (MediaFeedItem) feedObjects.get(position);
                     MediaViewHolder mediaViewHolder = (MediaViewHolder) holder;
-                    mediaViewHolder.mAuthorUsername.setText("@" + mediaItem.authorUsername);
-                    mediaViewHolder.mAuthorDisplayname.setText(mediaItem.authorDisplayname);
+                    mediaViewHolder.mAuthorUsername.setText("@" + mediaItem.getAuthorUsername());
+                    mediaViewHolder.mAuthorDisplayname.setText(mediaItem.getAuthorDisplayname());
+                    mediaViewHolder.mLikeCount.setText(mediaItem.getLikeCount()+"");
+                    mediaViewHolder.mRepostCount.setText(mediaItem.getRepostCount()+"");
+                    mediaViewHolder.mCommentCount.setText(mediaItem.getCommentCount()+"");
                     mediaViewHolder.mCaption.setText(mediaItem.getCaption());
 
                     break;
@@ -214,7 +311,7 @@ public class FeedFragment extends Fragment {
         protected class FeedObjViewHolder extends RecyclerView.ViewHolder {
 
             Button mLikeButton;
-            TextView mAuthorUsername;
+            TextView mAuthorUsername, mLikeCount,mCommentCount,mRepostCount;
             TextView mAuthorDisplayname;
             boolean liked = false;
 
@@ -223,6 +320,9 @@ public class FeedFragment extends Fragment {
                 mAuthorDisplayname = itemView.findViewById(R.id.author_displayname);
                 mAuthorUsername = itemView.findViewById(R.id.author_username);
                 mLikeButton = itemView.findViewById(R.id.likeButton);
+                mLikeCount = itemView.findViewById(R.id.textview_likecount);
+                mRepostCount = itemView.findViewById(R.id.textview_repostcount);
+                mCommentCount = itemView.findViewById(R.id.textview_commentcount);
                 mLikeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -264,13 +364,13 @@ public class FeedFragment extends Fragment {
         }
 
         protected class StatusViewHolder extends FeedObjViewHolder {
-            TextView status;
+            TextView mStatus;
 
 
             public StatusViewHolder(@NonNull View itemView) {
                 super(itemView);
                 // mCircleImageView = itemView.findViewById(R.id.storyProfilePic);
-                status = itemView.findViewById(R.id.status_status);
+                mStatus = itemView.findViewById(R.id.status_status);
 
             }
         }
@@ -279,10 +379,11 @@ public class FeedFragment extends Fragment {
 
     public class ThreadFeedItem extends FeedItem {
 
-        String subject,title,summary;
+        private String subject,title,summary;
 
-        public ThreadFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String subject, String title, String summary) {
-            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+
+        public ThreadFeedItem(String uid, String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, long likes, long repost, long comments, String subject, String title, String summary) {
+            super(uid, authorDisplayname, authorUsername, authorProfilePicture, media, type, likes, repost, comments);
             this.subject = subject;
             this.title = title;
             this.summary = summary;
@@ -314,15 +415,14 @@ public class FeedFragment extends Fragment {
     }
     public class StatusFeedItem extends FeedItem {
 
-        String status;
-        List<String> hashtags;
+        private String status;
+        private List<String> hashtags;
 
-        public StatusFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String status,List<String> hashtags) {
-            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+        public StatusFeedItem(String uid, String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, long likes, long repost, long comments, String status, List<String> hashtags) {
+            super(uid, authorDisplayname, authorUsername, authorProfilePicture, media, type, likes, repost, comments);
             this.status = status;
             this.hashtags = hashtags;
         }
-
         public List<String> getHashtags() {
             return hashtags;
         }
@@ -341,15 +441,14 @@ public class FeedFragment extends Fragment {
     }
     public class MediaFeedItem extends FeedItem {
 
-        String caption;
-        List<String> hashtags;
+        private String caption;
+        private List<String> hashtags;
 
-        public MediaFeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, String caption,List<String> hashtags) {
-            super(authorDisplayname, authorUsername, authorProfilePicture, media, type);
+        public MediaFeedItem(String uid, String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, long likes, long repost, long comments, String caption, List<String> hashtags) {
+            super(uid, authorDisplayname, authorUsername, authorProfilePicture, media, type, likes, repost, comments);
             this.caption = caption;
             this.hashtags = hashtags;
         }
-
 
         public List<String> getHashtags() {
             return hashtags;
@@ -368,10 +467,11 @@ public class FeedFragment extends Fragment {
         }
     }
     public class FeedItem {
-
-        String authorDisplayname, authorUsername, authorProfilePicture;
-        List<String> media;
-        PostType type;
+        private String uid;
+        private String authorDisplayname, authorUsername, authorProfilePicture;
+        private List<String> media;
+        private PostType type;
+        private long likeCount, repostCount, commentCount;
 
         @Override
         public String toString() {
@@ -379,16 +479,60 @@ public class FeedFragment extends Fragment {
                     "authorDisplayname='" + authorDisplayname + '\'' +
                     ", authorUsername='" + authorUsername + '\'' +
                     ", authorProfilePicture='" + authorProfilePicture + '\'' +
+                    ", media=" + media +
                     ", type=" + type +
+                    ", likes=" + likeCount +
+                    ", repost=" + repostCount +
+                    ", comments=" + commentCount +
                     '}';
         }
 
-        public FeedItem(String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type) {
+        public FeedItem(String uid, String authorDisplayname, String authorUsername, String authorProfilePicture, List<String> media, PostType type, long likes, long repost, long comments) {
+            this.uid = uid;
             this.authorDisplayname = authorDisplayname;
             this.authorUsername = authorUsername;
             this.authorProfilePicture = authorProfilePicture;
             this.media = media;
             this.type = type;
+            this.likeCount = likes;
+            this.repostCount = repost;
+            this.commentCount = comments;
+        }
+
+        public String getUid() {
+            return uid;
+        }
+
+        public void setUid(String uid) {
+            this.uid = uid;
+        }
+
+        public void setLikeCount(long likeCount) {
+            this.likeCount = likeCount;
+        }
+
+        public long getRepostCount() {
+            return repostCount;
+        }
+
+        public void setRepostCount(long repostCount) {
+            this.repostCount = repostCount;
+        }
+
+        public long getCommentCount() {
+            return commentCount;
+        }
+
+        public void setCommentCount(long commentCount) {
+            this.commentCount = commentCount;
+        }
+
+        public long getLikeCount() {
+            return likeCount;
+        }
+
+        public void setLikeCount(int likeCount) {
+            this.likeCount = likeCount;
         }
 
         public String getAuthorDisplayname() {

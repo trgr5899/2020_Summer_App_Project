@@ -184,7 +184,7 @@ public class PostActivity extends AppCompatActivity {
                     post.put("hashtags", mediaFragment.getHashTags());
                     post.put("usertags", mediaFragment.getTags());
                 }
-                CollectionReference collection = db.collection("post");
+                CollectionReference collection = db.collection("posts");
                 collection
                         .add(post)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
