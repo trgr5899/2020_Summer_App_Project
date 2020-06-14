@@ -36,41 +36,41 @@ XML layout's :
     │   ├── name "name"
     │   ├── type "personal/group"
     │   ├── participants
-    │	│    ├── 0 <uid>
-    │	│    └── 1 <uid>
-    │	└── messages
-    │	    ├──	<id1>
+    │   │    ├── 0 <uid>
+    │   │    └── 1 <uid>
+    │   └── messages
+    │       ├── <id1>
     │       │   └── ...
-    │	    └── <id2>
-    │           ├──	timestamp 23432423
-    │           ├──	author <uid>
-    │           ├──	author_displayname "display name"
-    │           └──	message "message"
+    │       └── <id2>
+    │           ├── timestamp 23432423
+    │           ├── author <uid>
+    │           ├── author_displayname "display name"
+    │           └── message "message"
     ├── <id2>
     │   └── ...
     └── <id2>
         └── ...
     POSTS
     ├── <id2>
-    │   └──	...
-    ├──	<id3>
+    │   └── ...
+    ├── <id3>
     │   ├── type "STATUS" //MEDIA,STATUS,THREAD;
-    │   ├──	author <uid>
-    │   ├──	author_displayname
-    │   ├──	author_username
-    │   ├──	comments ##
-    │   ├──	likes ##
-    │   ├──	reposts ##
-    │   ├──	hashtags
-    │   │	└──	0 "#example"
+    │   ├── author <uid>
+    │   ├── author_displayname
+    │   ├── author_username
+    │   ├── comments ##
+    │   ├── likes ##
+    │   ├── reposts ##
+    │   ├── hashtags
+    │   │   └── 0 "#example"
     │   └── media
-    │    	└──	0 "something.com/src"
+    │        └── 0 "something.com/src"
     └── <id4>
         └── ...
     ACCOUNTS
     ├── <uid1>
-    │   └──	...
-    ├──	<uid2>
+    │   └── ...
+    ├── <uid2>
     │   ├── displayname "fdsn amefdsf"
     │   ├── username "loginname"
     │   ├── email "email@com.com"
@@ -80,14 +80,13 @@ XML layout's :
     │   ├── summary "account summary / description" 
     │   ├── img_src_profile "fkjsdl.www/fgsd"
     │   ├── img_src_banner "fkjsdl.www/fgsdfd"
-    │	├── following 
-    │	│   ├── 0 <uid1>
-    │	│   └── 1 <uid2>
+    │   ├── following 
+    │   │   ├── 0 <uid1>
+    │   │   └── 1 <uid2>
     │   └── followers
-    │	    ├── 0 <uid1>
-    │	    ├── 1 <uid2>
-    │    	└── 2 <uid3>
+    │        ├── 0 <uid1>
+    │        ├── 1 <uid2>
+    │        └── 2 <uid3>
     └── <uid1>
-        └──	...
+        └──    ...
         <id4>
-        	...
