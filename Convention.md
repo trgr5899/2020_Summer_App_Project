@@ -1,7 +1,7 @@
 
 # CONVECTIONS :
 
-ViewType Class Variable's : 
+ViewType Class Variable's : (includes Fragment objects and other java objects relating to front end displays)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**"mTypeName"** --------------------------- e.g. mTextViewDisplayname
 
